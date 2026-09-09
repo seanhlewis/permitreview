@@ -294,7 +294,7 @@ async function loadMyTasks() {
 }
 function scheduleMyTasks() {
   if (myTasksTimer) clearTimeout(myTasksTimer);
-  myTasksTimer = setTimeout(loadMyTasks, 350);
+  myTasksTimer = setTimeout(loadMyTasks, 1000);
 }
 
 function progressFor(sample, mode) {

@@ -24,4 +24,4 @@ Set `STATICVER_HOST=127.0.0.1` for local-only access. The default host is `0.0.0
 
 ## Review coordination
 
-The previous app's targeted allocation assigns up to 300 permits per reviewer and keeps class coverage balanced. Saved answers create active assignments. Each permit accepts two distinct reviewer records. Comments and unfinished selections autosave. Every saved review records elapsed time and timestamps. `/test` uses in-memory fixtures and never writes to the live database.
+The copied app assigns all 50 permits in each active category to a reviewer, for up to 1,050 targeted permits. Saved answers create active assignments. Each permit accepts two distinct reviewer records. Comments and unfinished selections autosave. Every saved review records elapsed time and timestamps. `/test` uses in-memory fixtures and never writes to the live database.

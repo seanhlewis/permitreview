@@ -110,8 +110,8 @@ TARGET_CLASS_TITLES = {
 }
 TARGET_TASKS = tuple("taxval_v4_targeted_" + label.lower() for label in TARGET_CLASS_FAMILIES)
 TARGET_LABEL_BY_TASK = dict(zip(TARGET_TASKS, TARGET_CLASS_FAMILIES.keys()))
-ACTIVE_REVIEW_WORKLOAD = 300
-MIN_REVIEW_PER_CLASS = 10
+ACTIVE_REVIEW_WORKLOAD = 50 * len(TARGET_CLASS_FAMILIES)
+MIN_REVIEW_PER_CLASS = 50
 MAX_REVIEWERS_PER_TASK = 2
 TASK_SAMPLES = TARGET_TASKS
 TASK_TITLES = {k: v[1] for k, v in FAM_TASK.items()}
@@ -411,15 +411,15 @@ def normalize_assignment_completion(con):
             )
 
 
-def release_unstarted_assignments(con, reviewer_key_value):
-    """Release rows that have never been opened by this reviewer."""
+def release_unstarted_assignments(con, reviewer_key_value=None):
+    """Release provisional rows that have no saved review yet."""
     rows = con.execute(
         """
-        SELECT sample_name, review_id, reviewer_name
+        SELECT sample_name, review_id, reviewer_key, reviewer_name
         FROM active_assignments
-        WHERE reviewer_key = ? AND sample_name IN (%s)
+        WHERE sample_name IN (%s)
         """ % ",".join("?" for _ in TASK_SAMPLES),
-        (reviewer_key_value, *TASK_SAMPLES),
+        TASK_SAMPLES,
     ).fetchall()
     for row in rows:
         saved = con.execute(
@@ -438,7 +438,7 @@ def release_unstarted_assignments(con, reviewer_key_value):
                 DELETE FROM active_assignments
                 WHERE sample_name = ? AND review_id = ? AND reviewer_key = ?
                 """,
-                (row["sample_name"], row["review_id"], reviewer_key_value),
+                (row["sample_name"], row["review_id"], row["reviewer_key"]),
             )
 
 
