@@ -1822,6 +1822,23 @@ class Handler(BaseHTTPRequestHandler):
                 text_response(self, "<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Reviewer guide v1</title><link rel='stylesheet' href='/static/styles.css'></head><body>" + legacy + "</body></html>", 200, "text/html; charset=utf-8")
             elif path.startswith("/static/"):
                 file_response(self, APP_DIR / path.lstrip("/"))
+            elif path == "/api/health":
+                con = connect_db()
+                try:
+                    reviews = con.execute("SELECT COUNT(*) FROM reviews").fetchone()[0]
+                    assignments = con.execute("SELECT COUNT(*) FROM active_assignments").fetchone()[0]
+                    events = con.execute("SELECT COUNT(*) FROM events").fetchone()[0]
+                finally:
+                    con.close()
+                json_response(self, {
+                    "ok": True,
+                    "service": "staticver-human-eval",
+                    "port": PORT,
+                    "reviews": reviews,
+                    "activeAssignments": assignments,
+                    "timingEvents": events,
+                    "db": str(DB_PATH),
+                })
             elif path == "/api/status":
                 json_response(self, {"ok": True, "root": str(VALIDATION_ROOT), "samples": [sample_status(s) for s in SAMPLES]})
             elif path == "/api/history":
