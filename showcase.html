@@ -3,62 +3,138 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Permit review showcase</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Permit Validation Showcase</title>
+  <link rel="stylesheet" href="/static/styles.css">
   <style>
-    .demo-banner { background:#e8f4ff; border:1px solid #a9d2ee; border-radius:9px; padding:14px 16px; margin-bottom:22px; }
-    .demo-controls { display:flex; gap:12px; align-items:end; flex-wrap:wrap; margin:20px 0; }
-    .demo-controls label { display:grid; gap:6px; font-size:.82rem; font-weight:700; color:var(--muted); }
-    .demo-controls select { min-width:210px; }
-    .demo-queue { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:13px; }
-    .demo-card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px; }
-    .demo-card h3 { margin:0 0 8px; font-size:1rem; }
-    .demo-card p { color:var(--muted); font-size:.83rem; margin-bottom:12px; }
-    .demo-card .initials { color:var(--blue-dark); font-weight:800; letter-spacing:.08em; }
-    .demo-card.locked { background:#f0f3f5; }
-    .demo-card button { margin-top:10px; }
-    .demo-review { margin-top:22px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:22px; }
-    .demo-review[hidden] { display:none; }
+    .showcase-banner { margin: 24px auto 0; width: min(1180px, calc(100% - 32px)); border: 1px solid #9bc7e4; border-radius: 8px; padding: 14px 16px; background: #eef8ff; color: #21435a; }
+    .showcase-banner strong { display: block; margin-bottom: 4px; }
+    .showcase-banner a { color: #1e5f8a; font-weight: 700; }
+    .demo-only { color: var(--muted); font-size: .82rem; }
+    .demo-reviewer { min-width: 190px; }
+    .demo-card-note { color: var(--muted); font-size: .82rem; margin-top: 7px; }
+    .demo-review-shell { margin-top: 24px; }
+    .demo-review-shell .narrow-choice.selected { border-color: var(--good); background: #e9f7ef; box-shadow: 0 0 0 2px rgba(18,116,71,.12); }
+    .demo-review-shell .demo-disabled { opacity: .72; pointer-events: none; }
+    .demo-review-shell .demo-save-note { margin-top: 14px; border: 1px solid #d9c8a4; background: #fffaf0; color: #79551b; border-radius: 8px; padding: 12px 14px; }
+    .demo-review-shell .permit-panel small { display: block; color: var(--muted); margin-top: 9px; }
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div><div class="eyebrow">Showcase demo</div><h1>Permit review coordination</h1></div>
-    <a class="button secondary" href="/">Live reviewer page</a>
-  </header>
-  <main class="page-shell">
-    <div class="demo-banner"><strong>Demo data only.</strong> These test usernames and answers exist in this page’s memory. They never reach the live database.</div>
-    <div class="demo-controls">
-      <label>Show the page as
-        <select id="demoReviewer"><option value="Alex Morgan">Alex Morgan · A</option><option value="Brian Lee">Brian Lee · B</option><option value="Casey Patel">Casey Patel · C</option></select>
-      </label>
-      <button class="button secondary" id="resetDemo">Reset demo view</button>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">Permit validation · showcase demo</div>
+      <h1>Permit categorization review</h1>
     </div>
-    <div id="demoSummary" class="summary-grid"></div>
-    <div id="demoQueue" class="demo-queue"></div>
-    <article id="demoReview" class="demo-review" hidden></article>
-  </main>
+    <div class="top-actions">
+      <label class="reviewer-label" for="demoReviewer">Show as</label>
+      <select id="demoReviewer" class="reviewer-input demo-reviewer">
+        <option value="A">Alex Morgan · A</option>
+        <option value="B">Brian Lee · B</option>
+        <option value="C">Casey Patel · C</option>
+      </select>
+      <a class="icon-text" href="/">Live page</a>
+    </div>
+  </header>
+  <div class="showcase-banner">
+    <strong>Showcase only. No database writes.</strong>
+    This is the current 8873 reviewer layout with simulated halfway-completed work, shared reviewer initials, saved answers, notes, timing, and category locks. Use the reviewer selector to view different demo states. <a href="/">Open the live reviewer page</a>.
+  </div>
+  <main id="app"></main>
+
   <script>
-    const demo = {
-      "ALTERATION_REMODEL": {label:"Alteration / remodel", permits:50, reviewers:["A","B"], sample:"Kitchen and bathroom remodel of an existing residence."},
-      "BATTERY_STORAGE": {label:"Battery storage", permits:50, reviewers:["A"], sample:"Install stationary battery energy storage with backup gateway."},
-      "EV_CHARGER": {label:"EV charger", permits:50, reviewers:[], sample:"Install a Level 2 electric-vehicle charging station."},
-      "MECHANICAL_HVAC": {label:"Mechanical / HVAC", permits:50, reviewers:["B"], sample:"Replace the air-conditioning condenser and ductwork."},
-      "NEW_CONSTRUCTION": {label:"New construction", permits:50, reviewers:["A","B"], sample:"Construct a new two-story single-family residence."},
-      "PLUMBING": {label:"Plumbing", permits:50, reviewers:["C"], sample:"Replace bathroom fixtures and interior supply lines."},
-      "ROOFING": {label:"Roofing", permits:50, reviewers:[], sample:"Tear off and replace asphalt shingles."},
-      "STRUCTURAL": {label:"Structural", permits:50, reviewers:["B","C"], sample:"Repair foundation and reinforce load-bearing framing."}
-    };
-    const names = {"Alex Morgan":"A", "Brian Lee":"B", "Casey Patel":"C"};
-    function render() {
-      const current = names[document.querySelector('#demoReviewer').value];
-      const categories = Object.values(demo);
-      const assigned = categories.filter(c => c.reviewers.includes(current)).length;
-      document.querySelector('#demoSummary').innerHTML = `<div class="summary-card"><span class="summary-value">${assigned}</span><span class="summary-label">Categories assigned to ${current}</span></div><div class="summary-card"><span class="summary-value">${categories.length * 50}</span><span class="summary-label">Demo category slots shown</span></div><div class="summary-card"><span class="summary-value">2</span><span class="summary-label">Maximum reviewers per category</span></div>`;
-      document.querySelector('#demoQueue').innerHTML = categories.map((c, index) => { const locked = c.reviewers.length >= 2 && !c.reviewers.includes(current); const status = locked ? `Locked to ${c.reviewers.join(' · ')}` : c.reviewers.includes(current) ? 'Assigned to you' : c.reviewers.length ? `Open · ${c.reviewers.join(' · ')} saved` : 'Not started'; return `<article class="demo-card ${locked?'locked':''}"><h3>${c.label}</h3><p>${c.sample}</p><div class="initials">${c.reviewers.length ? 'Saved reviewers: '+c.reviewers.join(' · ') : 'No saved reviewers'}</div><div class="category-subline"><span>0/${c.permits} answered in this demo</span><span class="category-status">${status}</span></div><button class="button ${locked?'secondary':'primary'} demo-open" data-key="${Object.keys(demo)[index]}" ${locked?'disabled':''}>${locked?'Locked':'Open demo queue'}</button></article>`; }).join('');
-      document.querySelectorAll('.demo-open').forEach(b => b.addEventListener('click', () => { const c = demo[b.dataset.key]; const panel = document.querySelector('#demoReview'); panel.hidden = false; panel.innerHTML = `<div class="eyebrow">Demo queue</div><h2>${c.label}</h2><p><strong>Example permit:</strong> ${c.sample}</p><p><strong>Saved reviewer initials:</strong> ${c.reviewers.join(' · ') || 'None'}<br><strong>Current demo reviewer:</strong> ${current} · ${names[document.querySelector('#demoReviewer').value]}</p><div class="notice info">A real saved answer would add this reviewer’s initial and start the server timing record. This showcase does not write anything.</div>`; panel.scrollIntoView({behavior:'smooth'}); }));
+    const reviewerNames = {A: "Alex Morgan", B: "Brian Lee", C: "Casey Patel"};
+    const categories = [
+      {key:"alteration_remodel", label:"Alteration / remodel", done:{A:25,B:18,C:0}, reviewers:["A","B"], text:"Interior kitchen and bathroom remodel of an existing residence."},
+      {key:"battery_storage", label:"Battery storage", done:{A:50,B:22,C:0}, reviewers:["A"], text:"Install a stationary battery energy-storage system with backup gateway."},
+      {key:"deck_patio_porch", label:"Deck / patio / porch", done:{A:25,B:0,C:14}, reviewers:["A","C"], text:"Construct an attached wood deck with stairs at the rear of a residence."},
+      {key:"demolition", label:"Demolition", done:{A:50,B:0,C:0}, reviewers:["B","C"], text:"Demolish the existing single-family residence and foundation."},
+      {key:"driveway_paving", label:"Driveway / paving", done:{A:20,B:8,C:0}, reviewers:["A"], text:"Replace the concrete driveway approach and sidewalk with new paving."},
+      {key:"electrical_panel_upgrade", label:"Electrical panel upgrade", done:{A:50,B:31,C:0}, reviewers:["A","B"], text:"Upgrade the main service from 100A to 200A and replace the meter-main."},
+      {key:"ev_charger", label:"EV charger", done:{A:25,B:0,C:0}, reviewers:["A"], text:"Install a 240V dedicated circuit and Level 2 EV charger in the garage."},
+      {key:"fence_wall", label:"Fence / wall", done:{A:30,B:0,C:20}, reviewers:["A","C"], text:"Install a cedar fence and a masonry retaining wall."},
+      {key:"fire_protection", label:"Fire protection", done:{A:50,B:0,C:0}, reviewers:["A"], text:"Install an NFPA 13D fire sprinkler system throughout the residence."},
+      {key:"garage_accessory", label:"Garage / accessory", done:{A:15,B:17,C:0}, reviewers:["A","B"], text:"Construct a new detached garage behind the principal residence."},
+      {key:"gas", label:"Gas", done:{A:40,B:0,C:0}, reviewers:["A"], text:"Extend fuel-gas piping to a range and dryer."},
+      {key:"grading_sitework", label:"Grading / sitework", done:{A:20,B:0,C:0}, reviewers:["A"], text:"Perform rough grading and excavation with erosion control."},
+      {key:"mechanical_hvac", label:"Mechanical / HVAC", done:{A:50,B:24,C:0}, reviewers:["A","B"], text:"Replace the gas furnace and air conditioner with new ductwork."},
+      {key:"new_construction", label:"New construction", done:{A:25,B:50,C:0}, reviewers:["A","B"], text:"Construct a new two-story single-family residence."},
+      {key:"plumbing", label:"Plumbing", done:{A:30,B:0,C:21}, reviewers:["A","C"], text:"Repipe two bathrooms and replace fixtures and drain lines."},
+      {key:"roofing", label:"Roofing", done:{A:20,B:0,C:0}, reviewers:["A"], text:"Tear off and reroof the existing residence with asphalt shingles."},
+      {key:"sewer_utility", label:"Sewer / utility", done:{A:0,B:0,C:0}, reviewers:[], text:"Replace the sewer lateral from the house to the city main."},
+      {key:"sign", label:"Sign", done:{A:0,B:0,C:0}, reviewers:["B"], text:"Install an illuminated wall sign for a retail tenant."},
+      {key:"structural", label:"Structural", done:{A:0,B:40,C:12}, reviewers:["B","C"], text:"Repair the foundation and reinforce load-bearing framing."},
+      {key:"water_heater", label:"Water heater", done:{A:0,B:0,C:0}, reviewers:[], text:"Replace a 50-gallon gas water heater with a tankless unit."},
+      {key:"window_door", label:"Window / door", done:{A:0,B:0,C:0}, reviewers:[], text:"Replace twelve windows and two exterior doors like-for-like."}
+    ];
+
+    const app = document.querySelector("#app");
+    let selectedReviewer = "A";
+    let openCategory = null;
+
+    function esc(value) { return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+    function reviewerInitials(row) { return row.reviewers.length ? row.reviewers.join(" · ") : "None yet"; }
+    function status(row) {
+      const mine = row.reviewers.includes(selectedReviewer);
+      if (row.reviewers.length >= 2 && !mine) return `Locked to ${reviewerInitials(row)}`;
+      const done = row.done[selectedReviewer] || 0;
+      if (mine && done >= 50) return "Complete";
+      if (mine && done) return "In progress";
+      if (row.reviewers.length) return `Open · ${reviewerInitials(row)} saved`;
+      return "Not started";
     }
-    document.querySelector('#demoReviewer').addEventListener('change', render); document.querySelector('#resetDemo').addEventListener('click', render); render();
+    function locked(row) { return row.reviewers.length >= 2 && !row.reviewers.includes(selectedReviewer); }
+    function renderDashboard() {
+      openCategory = null;
+      const completed = categories.reduce((sum, row) => sum + (row.done[selectedReviewer] || 0), 0);
+      const completeQueues = categories.filter(row => row.reviewers.includes(selectedReviewer) && (row.done[selectedReviewer] || 0) >= 50).length;
+      const rows = categories.map(row => {
+        const done = row.done[selectedReviewer] || 0;
+        const isLocked = locked(row);
+        const button = isLocked ? "Locked" : done >= 50 ? "Review again" : done ? "Resume" : "Start";
+        return `<section class="sample-row ${isLocked ? "demo-locked" : ""}">
+          <div class="sample-main">
+            <div class="sample-title">${esc(row.label)} <span class="task-badge ${done >= 50 ? "done" : done ? "in_progress" : isLocked ? "locked" : "not_started"}">${esc(isLocked ? "Locked" : done >= 50 ? "Done" : done ? "In progress" : "Not started")}</span></div>
+            <div class="sample-meta">${done}/50 class-target reviews · ${50 - done} left</div>
+            <div class="bar"><div style="width:${done * 2}%"></div></div>
+            <div class="demo-card-note">Saved reviewer initials: ${esc(reviewerInitials(row))} · ${esc(status(row))}</div>
+          </div>
+          <div class="sample-actions"><button class="primary-action" data-open="${esc(row.key)}" ${isLocked ? "disabled" : ""}>${button}</button></div>
+        </section>`;
+      }).join("");
+      app.innerHTML = `<section class="queue-section">
+        <div class="queue-section-head"><h2>Active targeted queues</h2><p>Class-organized permits for the current human validation round.</p></div>
+        <div class="review-mode-guide"><div><strong>Demo reviewer</strong><span>${esc(reviewerNames[selectedReviewer])} · ${selectedReviewer}</span></div><div><strong>Shared coordination</strong><span>Two reviewer records per permit. Category initials are visible to reviewers.</span></div></div>
+        <section class="summary-grid"><div class="summary-card"><span class="summary-value">${completed}</span><span class="summary-label">Your saved answers</span></div><div class="summary-card"><span class="summary-value">1,050</span><span class="summary-label">Assigned permits</span></div><div class="summary-card"><span class="summary-value">${completeQueues}</span><span class="summary-label">Completed queues</span></div></section>
+        <section class="sample-list">${rows}</section>
+      </section>
+      <section class="queue-section historical-section"><div class="queue-section-head"><h2>Historical review tasks</h2><p>Historical records remain viewable and locked.</p></div><section class="sample-list"><section class="sample-row historical-task"><div class="sample-main"><div class="sample-title">Historical review records <span class="task-badge locked">Historical · locked</span></div><div class="sample-meta">No saved historical records for this demo reviewer</div></div><div class="sample-actions"><button disabled>View</button></div></section></section></section>`;
+      document.querySelectorAll("[data-open]").forEach(button => button.addEventListener("click", () => renderReview(button.dataset.open)));
+    }
+
+    function renderReview(key) {
+      const row = categories.find(item => item.key === key);
+      if (!row || locked(row)) return;
+      openCategory = key;
+      const done = row.done[selectedReviewer] || 0;
+      const selected = done > 0 ? row.key : "";
+      app.innerHTML = `<section class="review-shell demo-review-shell">
+        <div class="review-header"><button id="demoHome">Home</button><div><div class="eyebrow">Narrow review · showcase</div><h2>${esc(reviewerNames[selectedReviewer])} — Targeted review · ${esc(row.label)}</h2></div><div class="review-nav"><button id="demoBack" ${done ? "" : "disabled"}>Back</button><span>${Math.max(1, done + 1)} / 50</span><button id="demoForward">Forward</button></div></div>
+        <section class="permit-panel"><p>${esc(row.text)}</p><small>Permit 99067-DEMO-${String(done + 1).padStart(4, "0")} · Saved reviewers: ${esc(reviewerInitials(row))}</small></section>
+        <section class="narrow-panel">
+          <div class="narrow-head">What specific type of work is this permit? <span class="muted">— ${esc(row.label.includes("/") ? "Building and trades" : "Targeted class")}</span></div>
+          <div class="narrow-grid demo-disabled"><button class="narrow-choice ${selected === "alteration_remodel" ? "selected" : ""}"><b>1</b><span>${esc(row.label)}</span></button><button class="narrow-choice"><b>2</b><span>Another active category</span></button><button class="narrow-choice"><b>3</b><span>Not applicable</span></button></div>
+          <div class="narrow-actions demo-disabled"><button class="narrow-none"><b>8</b>None of these apply</button><button class="narrow-skip"><b>9</b>Skip for now</button></div>
+          <input id="noteField" type="text" value="Main scope is supported by the permit description." disabled>
+        </section>
+        <div class="demo-save-note"><strong>Demo state:</strong> This permit already has a saved answer and timing record. Controls are disabled in the showcase. Nothing on this page reaches the live database.</div>
+      </section>`;
+      document.querySelector("#demoHome").onclick = renderDashboard;
+      document.querySelector("#demoBack").onclick = () => renderReview(key);
+      document.querySelector("#demoForward").onclick = () => renderReview(key);
+    }
+
+    document.querySelector("#demoReviewer").addEventListener("change", event => { selectedReviewer = event.target.value; renderDashboard(); });
+    renderDashboard();
   </script>
 </body>
 </html>
