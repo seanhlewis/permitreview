@@ -1,6 +1,6 @@
 # Permit review — staticver
 
-This folder contains the static permit export and its separate live reviewer server. The permit records stay in JSON. Review answers, comments, category assignments, and timing records go to `instance/staticver.sqlite3`. The existing live application and its database are not used.
+This folder contains the static permit export and a live copy of the established human-validation webapp. The copied app keeps its guided, blind, narrow, history, timing, keyboard, and reviewer-guide flows. Permit records stay in JSON. Review answers, comments, assignments, and timing records go to `instance/human_eval.sqlite3`.
 
 ## Build the export
 
@@ -10,7 +10,7 @@ From this folder:
 py -3 build_static_export.py
 ```
 
-The builder reads the current review database only to exclude permits that already have a saved review. It writes `data/permits.json` and `data/manifest.json`. The export has 21 category queues with 50 category permits each when the source inventory supports the requirement. A permit can appear in more than one category when its source evidence supports both categories.
+The builder reads the current review database to exclude permits that already have a saved review. It writes `data/permits.json` and `data/manifest.json`. The export has 21 category queues with 50 permits each.
 
 ## Run locally with live saving
 
@@ -24,4 +24,4 @@ Set `STATICVER_HOST=127.0.0.1` for local-only access. The default host is `0.0.0
 
 ## Review coordination
 
-The first saved answer creates the reviewer’s category assignment. Each category accepts two distinct reviewers. A third reviewer receives a server-side lock response. Each permit also accepts two distinct reviewer records. Comments save as drafts and do not create an assignment. Every answer and draft records elapsed time and timestamps. `/test` uses in-memory fixtures and never writes to the live database.
+The previous app's targeted allocation assigns up to 300 permits per reviewer and keeps class coverage balanced. Saved answers create active assignments. Each permit accepts two distinct reviewer records. Comments and unfinished selections autosave. Every saved review records elapsed time and timestamps. `/test` uses in-memory fixtures and never writes to the live database.

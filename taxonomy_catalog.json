@@ -1,0 +1,202 @@
+[
+ {
+  "flag": "EV_CHARGER",
+  "category": "Electrical",
+  "subcategory": "EV Charger",
+  "description": "Installation or material alteration of electric vehicle charging equipment",
+  "include_examples": "EVSE; Level 2 charger; vehicle charging station",
+  "exclude_examples": "Parking electrical work without charging equipment"
+ },
+ {
+  "flag": "BATTERY_STORAGE",
+  "category": "Electrical",
+  "subcategory": "Battery Storage",
+  "description": "Stationary electrical energy storage equipment",
+  "include_examples": "Battery energy storage system; ESS; Powerwall",
+  "exclude_examples": "Ordinary batteries in alarms or vehicles"
+ },
+ {
+  "flag": "SOLAR_PV",
+  "category": "Electrical",
+  "subcategory": "Solar PV",
+  "description": "Photovoltaic solar electric generation equipment",
+  "include_examples": "PV modules; photovoltaic array; solar electric",
+  "exclude_examples": "Solar thermal only; generic electrical permit"
+ },
+ {
+  "flag": "GAS",
+  "category": "Plumbing",
+  "subcategory": "Gas",
+  "description": "Fuel gas piping meters or gas-fired equipment connections",
+  "include_examples": "Gas piping; gas meter; fuel gas",
+  "exclude_examples": "Water piping; gasoline storage"
+ },
+ {
+  "flag": "SIGN",
+  "category": "Exterior",
+  "subcategory": "Sign",
+  "description": "Installation alteration or removal of signs and associated sign structures",
+  "include_examples": "Wall sign; monument sign; illuminated sign",
+  "exclude_examples": "Traffic signs; contract signatures"
+ },
+ {
+  "flag": "ALTERATION_REMODEL",
+  "category": "Building",
+  "subcategory": "Alteration Remodel",
+  "description": "Alteration renovation or remodel of an existing building",
+  "include_examples": "Interior renovation; tenant alteration",
+  "exclude_examples": "New standalone building with no alteration scope"
+ },
+ {
+  "flag": "ROOFING",
+  "category": "Exterior",
+  "subcategory": "Roofing",
+  "description": "Roof covering replacement repair or new roof work",
+  "include_examples": "Reroof; shingles; membrane roof",
+  "exclude_examples": "Roof-mounted equipment with no roofing scope"
+ },
+ {
+  "flag": "WATER_HEATER",
+  "category": "Plumbing",
+  "subcategory": "Water Heater",
+  "description": "Installation or replacement of water-heating equipment",
+  "include_examples": "Water heater; tankless heater; heat-pump water heater",
+  "exclude_examples": "Space-heating boiler without domestic hot water scope"
+ },
+ {
+  "flag": "WINDOW_DOOR",
+  "category": "Exterior",
+  "subcategory": "Window Door",
+  "description": "Installation replacement or alteration of windows doors or glazing",
+  "include_examples": "Window replacement; storefront glazing; exterior door",
+  "exclude_examples": "Framing with no window door or glazing work"
+ },
+ {
+  "flag": "FENCE_WALL",
+  "category": "Sitework",
+  "subcategory": "Fence Wall",
+  "description": "Construction alteration or replacement of fences or freestanding walls",
+  "include_examples": "Fence; retaining wall; masonry wall",
+  "exclude_examples": "Interior partition wall"
+ },
+ {
+  "flag": "HEAT_PUMP",
+  "category": "Mechanical and HVAC",
+  "subcategory": "Heat Pump",
+  "description": "Installation or replacement of heat-pump equipment",
+  "include_examples": "Air-source heat pump; mini-split heat pump",
+  "exclude_examples": "Generic HVAC; heat-pump water heater when only domestic water heating"
+ },
+ {
+  "flag": "PLUMBING",
+  "category": "Plumbing",
+  "subcategory": "Plumbing",
+  "description": "General plumbing fixtures water supply drainage or piping work",
+  "include_examples": "Plumbing permit; fixtures; water piping",
+  "exclude_examples": "Fuel gas only; sewer utility main only"
+ },
+ {
+  "flag": "NEW_CONSTRUCTION",
+  "category": "Building",
+  "subcategory": "New Construction",
+  "description": "Construction of a new principal building or structure",
+  "include_examples": "New building; new residence",
+  "exclude_examples": "Addition or accessory structure only"
+ },
+ {
+  "flag": "DEMOLITION",
+  "category": "Building",
+  "subcategory": "Demolition",
+  "description": "Full or partial demolition of a building structure or interior",
+  "include_examples": "Total demolition; selective demolition",
+  "exclude_examples": "Removal of one fixture with no demolition scope"
+ },
+ {
+  "flag": "MECHANICAL_HVAC",
+  "category": "Mechanical and HVAC",
+  "subcategory": "Mechanical HVAC",
+  "description": "General mechanical heating ventilation cooling or refrigeration work",
+  "include_examples": "HVAC; air conditioning; ductwork",
+  "exclude_examples": "Heat pump when the narrower label is supported"
+ },
+ {
+  "flag": "FIRE_PROTECTION",
+  "category": "Life safety",
+  "subcategory": "Fire Protection",
+  "description": "Fire alarm sprinkler suppression or related detection systems",
+  "include_examples": "Fire sprinkler; fire alarm; hood suppression",
+  "exclude_examples": "Lawn irrigation sprinkler"
+ },
+ {
+  "flag": "DECK_PATIO_PORCH",
+  "category": "Exterior",
+  "subcategory": "Deck Patio Porch",
+  "description": "Construction repair or alteration of decks patios or porches",
+  "include_examples": "Deck; patio; porch",
+  "exclude_examples": "Interior floor platform"
+ },
+ {
+  "flag": "DRIVEWAY_PAVING",
+  "category": "Sitework",
+  "subcategory": "Driveway Paving",
+  "description": "Driveway sidewalk paving or hardscape work",
+  "include_examples": "Driveway approach; asphalt paving; sidewalk",
+  "exclude_examples": "Roof paving products"
+ },
+ {
+  "flag": "GRADING_SITEWORK",
+  "category": "Sitework",
+  "subcategory": "Grading Sitework",
+  "description": "Earthwork excavation grading erosion control or general site preparation",
+  "include_examples": "Grading; excavation; site preparation",
+  "exclude_examples": "Interior renovation"
+ },
+ {
+  "flag": "GARAGE_ACCESSORY",
+  "category": "Building",
+  "subcategory": "Garage Accessory",
+  "description": "Garage carport shed ADU or other accessory structure",
+  "include_examples": "Detached garage; shed; accessory dwelling unit",
+  "exclude_examples": "Principal new building"
+ },
+ {
+  "flag": "STRUCTURAL",
+  "category": "Building",
+  "subcategory": "Structural",
+  "description": "Structural framing foundation reinforcement or load-bearing work",
+  "include_examples": "Foundation repair; structural framing; seismic retrofit",
+  "exclude_examples": "Nonstructural finish work"
+ },
+ {
+  "flag": "POOL_SPA",
+  "category": "Sitework",
+  "subcategory": "Pool Spa",
+  "description": "Swimming pool spa hot tub or associated pool equipment",
+  "include_examples": "Pool; spa; hot tub",
+  "exclude_examples": "Decorative fountain or commercial beauty spa"
+ },
+ {
+  "flag": "ELECTRICAL",
+  "category": "Electrical",
+  "subcategory": "Electrical",
+  "description": "General electrical wiring circuits service fixtures or equipment work",
+  "include_examples": "Electrical permit; wiring; circuits",
+  "exclude_examples": "Narrow solar EV charger battery or panel upgrade when specifically supported"
+ },
+ {
+  "flag": "SEWER_UTILITY",
+  "category": "Sitework",
+  "subcategory": "Sewer Utility",
+  "description": "Sewer water utility service main lateral or right-of-way utility connection",
+  "include_examples": "Sewer lateral; water service; utility main",
+  "exclude_examples": "Interior plumbing fixtures"
+ },
+ {
+  "flag": "ELECTRICAL_PANEL_UPGRADE",
+  "category": "Electrical",
+  "subcategory": "Electrical Panel Upgrade",
+  "description": "Replacement upgrade or capacity change of electrical service panel or meter-main",
+  "include_examples": "Panel replacement; 100A to 200A service; meter-main upgrade",
+  "exclude_examples": "Reconnect or inspection only with no replacement or capacity change"
+ }
+]
