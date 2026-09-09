@@ -12,6 +12,15 @@ function initial(name = reviewerName()) { return (name.trim()[0] || "?").toUpper
 function taskKey(category, permit) { return `${category}::${permit.id}`; }
 function records(category, permit) { return state.store.reviews[taskKey(category, permit)] || []; }
 function uniqueInitials(category, permit) { return [...new Map(records(category, permit).map(r => [r.reviewerKey, r.initial])).values()]; }
+function categoryReviewers(category) {
+  const reviewers = new Map();
+  for (const permit of state.byCategory.get(category) || []) for (const record of records(category, permit)) reviewers.set(record.reviewerKey, record.initial);
+  return reviewers;
+}
+function categoryLocked(category) {
+  const reviewers = categoryReviewers(category);
+  return reviewers.size >= (state.manifest?.reviewerSlotsPerPermit || 2) && !reviewers.has(reviewerKey());
+}
 function currentRecord(category, permit) { return records(category, permit).find(r => r.reviewerKey === reviewerKey()) || null; }
 function isAnsweredByCurrent(category, permit) { return !!currentRecord(category, permit); }
 function canEdit(category, permit) { const own = currentRecord(category, permit); return !!own || uniqueInitials(category, permit).length < (state.manifest?.reviewerSlotsPerPermit || 2); }
@@ -42,15 +51,18 @@ function renderDashboard() {
   document.querySelector("#categoryGrid").innerHTML = state.manifest.categories.map(category => {
     const rows = state.byCategory.get(category.code) || [];
     const mine = rows.filter(p => isAnsweredByCurrent(category.code, p)).length;
-    const initials = [...new Set(rows.flatMap(p => uniqueInitials(category.code, p)))].slice(0, 8);
+    const initials = [...categoryReviewers(category.code).values()].slice(0, 8);
     const complete = mine === rows.length;
-    return `<article class="category-card"><div><h3>${esc(category.label)}</h3><div class="category-subline"><span>${mine}/${rows.length} answered</span><span class="category-status">${complete ? "Complete" : mine ? "In progress" : "Not started"}</span></div></div><div class="claim-preview">${initials.length ? `Saved reviewer initials in this browser: ${initials.map(esc).join(" · ")}` : "No saved reviewer answers in this browser"}</div><button class="button primary start-category" data-category="${esc(category.code)}">Review queue</button></article>`;
+    const locked = categoryLocked(category.code);
+    const buttonText = locked ? `Locked to ${initials.map(esc).join(" · ")}` : "Review queue";
+    return `<article class="category-card"><div><h3>${esc(category.label)}</h3><div class="category-subline"><span>${mine}/${rows.length} answered</span><span class="category-status">${locked ? "Assigned" : complete ? "Complete" : mine ? "In progress" : "Not started"}</span></div></div><div class="claim-preview">${initials.length ? `Saved reviewer initials in this browser: ${initials.map(esc).join(" · ")}` : "No saved reviewer answers in this browser"}</div><button class="button primary start-category" data-category="${esc(category.code)}" ${locked ? "disabled" : ""}>${buttonText}</button></article>`;
   }).join("");
   document.querySelectorAll(".start-category").forEach(button => button.addEventListener("click", () => openCategory(button.dataset.category)));
 }
 
 function openCategory(category) {
   if (!reviewerName()) { document.querySelector("#reviewerName").focus(); document.querySelector("#loadStatus").textContent = "Enter your name before opening a review queue."; return; }
+  if (categoryLocked(category)) { document.querySelector("#loadStatus").textContent = "This category already has two saved reviewers in this browser."; return; }
   state.store.reviewerName = reviewerName(); persist(); state.category = category;
   const rows = state.byCategory.get(category) || [];
   const first = rows.findIndex(p => canEdit(category, p) && !isAnsweredByCurrent(category, p));
