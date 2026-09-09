@@ -1,0 +1,244 @@
+{
+  "formatVersion": 1,
+  "generatedAtUtc": "2026-09-09T22:14:15.088621+00:00",
+  "staticMode": true,
+  "reviewerSlotsPerPermit": 2,
+  "permitsPerCategory": 50,
+  "categoryCount": 21,
+  "categorySlotCount": 1050,
+  "uniquePermitCount": 1050,
+  "categories": [
+    {
+      "code": "ALTERATION_REMODEL",
+      "label": "Alteration / remodel",
+      "permitCount": 50
+    },
+    {
+      "code": "BATTERY_STORAGE",
+      "label": "Battery storage",
+      "permitCount": 50
+    },
+    {
+      "code": "DECK_PATIO_PORCH",
+      "label": "Deck / patio / porch",
+      "permitCount": 50
+    },
+    {
+      "code": "DEMOLITION",
+      "label": "Demolition",
+      "permitCount": 50
+    },
+    {
+      "code": "DRIVEWAY_PAVING",
+      "label": "Driveway / paving",
+      "permitCount": 50
+    },
+    {
+      "code": "ELECTRICAL_PANEL_UPGRADE",
+      "label": "Electrical panel upgrade",
+      "permitCount": 50
+    },
+    {
+      "code": "EV_CHARGER",
+      "label": "EV charger",
+      "permitCount": 50
+    },
+    {
+      "code": "FENCE_WALL",
+      "label": "Fence / wall",
+      "permitCount": 50
+    },
+    {
+      "code": "FIRE_PROTECTION",
+      "label": "Fire protection",
+      "permitCount": 50
+    },
+    {
+      "code": "GARAGE_ACCESSORY",
+      "label": "Garage / accessory",
+      "permitCount": 50
+    },
+    {
+      "code": "GAS",
+      "label": "Gas",
+      "permitCount": 50
+    },
+    {
+      "code": "GRADING_SITEWORK",
+      "label": "Grading / sitework",
+      "permitCount": 50
+    },
+    {
+      "code": "MECHANICAL_HVAC",
+      "label": "Mechanical / HVAC",
+      "permitCount": 50
+    },
+    {
+      "code": "NEW_CONSTRUCTION",
+      "label": "New construction",
+      "permitCount": 50
+    },
+    {
+      "code": "PLUMBING",
+      "label": "Plumbing",
+      "permitCount": 50
+    },
+    {
+      "code": "ROOFING",
+      "label": "Roofing",
+      "permitCount": 50
+    },
+    {
+      "code": "SEWER_UTILITY",
+      "label": "Sewer / utility",
+      "permitCount": 50
+    },
+    {
+      "code": "SIGN",
+      "label": "Sign",
+      "permitCount": 50
+    },
+    {
+      "code": "STRUCTURAL",
+      "label": "Structural",
+      "permitCount": 50
+    },
+    {
+      "code": "WATER_HEATER",
+      "label": "Water heater",
+      "permitCount": 50
+    },
+    {
+      "code": "WINDOW_DOOR",
+      "label": "Window / door",
+      "permitCount": 50
+    }
+  ],
+  "source": "validation_177m_20260602/release_versions/taxonomy81-sota-candidate-v0.13.0-real-human-calibrated/professional_lockbox_review_package_ready/global_all_permit_lockbox_review_queue.csv",
+  "excludedReviewDatabase": "human_eval_webapp_177m/instance/audit.sqlite3 (read locally during build; not copied)",
+  "stats": {
+    "sourceRows": 3533,
+    "uniqueEligiblePermits": 2490,
+    "rowsExcludedAsPreviouslyReviewed": 1043,
+    "categorySlots": 1050,
+    "uniquePermitsInBundle": 1050,
+    "overlapPermitCount": 0
+  },
+  "rawFallbackRowsAdded": 600,
+  "sourceQueueFiles": [
+    "validation_177m_20260602\\release_versions\\taxonomy81-sota-candidate-v0.12.0\\remote_v12_duckdb_smoke_250\\review_package_smoke\\category_stratified_review_queue.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-sota-candidate-v0.12.0\\remote_v12_duckdb_smoke_250\\review_package_smoke\\global_all_permit_lockbox_review_queue.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-sota-candidate-v0.13.0-real-human-calibrated\\professional_lockbox_review_package_ready\\category_stratified_review_queue.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-sota-candidate-v0.13.0-real-human-calibrated\\professional_lockbox_review_package_ready\\global_all_permit_lockbox_review_queue.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\1999.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2002_Q3.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2010_Q2.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2010_Q3.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2011_Q1.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2011_Q3.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2011_Q4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2012_Q1.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2012_Q2.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2012_Q3.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2012_Q4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2013_Q1.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2013_Q4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2014_Q1.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2014_Q4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\2016_Q4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\2017-10-01_2017-10-07.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\2017-10-08_2017-10-14.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\2017-10-15_2017-10-21.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\2017-10-22_2017-10-23.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\2017-10-29_2017-10-31.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\2017_11.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\2017_12.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\04f0f93380cd10e4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\1b0229a10bff1f27.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\2097c2c47b0c7fa5.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\31fa9b45a5b8912a.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\34951a62d8dcda60.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\4940ccc929728ac1.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\52088626bb05930a.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\63fb247da6c18acc.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\750817090d8dbde8.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\800c5bd6c983bd38.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\819b7bfb6fbf6330.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\9790e0208edb590e.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\993d43b4c74f823e.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\9a351f7bcd8e3bd8.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\9c50492541f16c4d.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\9e9bb0f27a22fe30.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\aa0f987797835338.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\ab55238b37b3f292.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\b556cf7bce6a076f.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\bbd45893168aa25c.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\befea16c905051be.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\c16f8f7d7637dcfe.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\cc93c2d491d08885.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\cd5e54b62d79155e.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\cee56b8602d3e5fd.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\atlanta_ga_building_accela_exports_v082\\monthly_repairs\\types_2017-10-22_2017-10-28\\e26459745b2a6988.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\indy_permits_accela_exports_v082\\monthly_repairs\\1996-02-01_1996-02-07.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\indy_permits_accela_exports_v082\\monthly_repairs\\1996-02-22_1996-02-28.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\indy_permits_accela_exports_v082\\monthly_repairs\\1996-02-29_1996-02-29.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2016_01.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2016_12.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2017_01.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2017_02.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2017_04.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2017_05.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2017_07.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2017_08.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2017_09.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2017_11.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2017_12.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2018_01.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2018_02.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2018_12.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2019_09.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2019_10.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2019_11.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2020_03.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2020_11.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2020_12.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2021_01.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2021_02.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2021_04.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2022_01.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2022_11.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2022_12.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2023_01.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2023_02.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2023_09.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2023_12.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2024_07.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2025_01.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2025_02.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2025_10.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\milwaukee_lms_v088\\2026_09.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2016_Q4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2018_Q1.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2021_Q4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2022_Q2.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2022_Q3.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2022_Q4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2023_Q1.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2023_Q2.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2023_Q3.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2023_Q4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2024_Q1.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\2024_Q2.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\2016-04-01_2016-04-07.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\2016-04-15_2016-04-21.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\2016-04-22_2016-04-28.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\2016_06.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\types_2016-04-08_2016-04-14\\2f60d7d2cc542088.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\types_2016-04-08_2016-04-14\\4e550d33a73b8763.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\types_2016-04-08_2016-04-14\\7b9b146722d3e7e4.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\types_2016-04-08_2016-04-14\\8a0a5725b57eafa3.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\types_2016-04-08_2016-04-14\\d357a09292b92e9b.csv",
+    "validation_177m_20260602\\release_versions\\taxonomy81-v15-learned-supervised\\permit150m_20260908\\data\\pasco_permits_accela_exports_v082\\monthly_repairs\\types_2016-04-08_2016-04-14\\e75c5dbf84a27835.csv"
+  ],
+  "coordinationNote": "Static localStorage state only; shared cross-device claims require a backend."
+}

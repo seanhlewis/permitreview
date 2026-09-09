@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Permit validation</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div>
+      <div class="eyebrow">Human validation</div>
+      <h1>Permit categorization review</h1>
+    </div>
+    <div class="header-actions">
+      <button class="button secondary" id="helpButton">Help</button>
+      <button class="button secondary" id="resetButton">Reset this device</button>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <div class="notice warning">
+      <strong>Static review copy.</strong> Answers and reviewer initials are saved in this browser only. Shared cross-device locks are not available on GitHub Pages. Do not use this copy as the authoritative shared review database.
+    </div>
+
+    <section id="dashboardView">
+      <div class="intro-row">
+        <div>
+          <div class="eyebrow">Reviewer identity</div>
+          <h2>Choose a review queue</h2>
+          <p class="muted">Enter your name. A permit is associated with you after you save an answer.</p>
+        </div>
+        <label class="name-field">Reviewer name
+          <input id="reviewerName" autocomplete="name" placeholder="First and last name">
+        </label>
+      </div>
+      <div id="loadStatus" class="status-line">Loading permit queues…</div>
+      <div id="summary" class="summary-grid"></div>
+      <div id="categoryGrid" class="category-grid"></div>
+    </section>
+
+    <section id="reviewView" hidden>
+      <div class="review-toolbar">
+        <button class="button secondary" id="backToQueues">← Queues</button>
+        <div>
+          <div class="eyebrow" id="reviewCategoryEyebrow"></div>
+          <h2 id="reviewCategoryTitle"></h2>
+        </div>
+        <div class="reviewer-badge" id="reviewerBadge"></div>
+      </div>
+      <div class="review-layout">
+        <aside class="queue-sidebar">
+          <div class="sidebar-heading"><span>Queue</span><span id="queueCount"></span></div>
+          <div id="queueList"></div>
+        </aside>
+        <article class="review-card">
+          <div class="permit-topline">
+            <span id="permitNumber"></span>
+            <span id="permitProgress"></span>
+          </div>
+          <div class="permit-description" id="permitDescription"></div>
+          <div class="permit-meta" id="permitMeta"></div>
+          <div class="claim-line"><span>Saved reviewers</span><span id="claimers"></span></div>
+          <div id="lockMessage" class="notice info" hidden></div>
+
+          <fieldset id="answerFieldset">
+            <legend>Does this permit belong to this category?</legend>
+            <label class="choice"><input type="radio" name="answer" value="yes"> <span><strong>Yes</strong><small>The category clearly applies.</small></span></label>
+            <label class="choice"><input type="radio" name="answer" value="no"> <span><strong>No</strong><small>The category does not apply.</small></span></label>
+            <label class="choice"><input type="radio" name="answer" value="unclear"> <span><strong>Unclear</strong><small>The available record does not support a confident decision.</small></span></label>
+          </fieldset>
+
+          <label class="notes-field">Comment <span id="autosaveStatus" class="muted">Autosaved locally</span>
+            <textarea id="comment" rows="4" placeholder="Optional evidence or explanation"></textarea>
+          </label>
+          <div class="review-actions">
+            <button class="button secondary" id="previousPermit">← Previous</button>
+            <button class="button primary" id="saveNext">Save answer and next →</button>
+          </div>
+          <div class="keyboard-hint">Arrow keys move between permits when the cursor is not in a text field.</div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="helpDialog">
+    <div class="dialog-header"><h2>Review guide</h2><button class="icon-button" id="closeHelp">×</button></div>
+    <div class="help-content">
+      <p>Choose a category and review the permits shown in that queue. Read the description and supporting metadata before selecting Yes, No, or Unclear.</p>
+      <p>Starting a queue does not claim a permit. The permit is associated with your first saved answer. Your first name initial appears beside the permit for this browser.</p>
+      <p>This static copy keeps two reviewer slots per category permit in local browser storage. A shared lock across reviewers and devices requires the live application backend.</p>
+      <p>Comments autosave locally as you type. Use the Previous and Next controls or the arrow keys to move through the queue.</p>
+    </div>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
