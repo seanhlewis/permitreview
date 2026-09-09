@@ -14,13 +14,13 @@
     </div>
     <div class="header-actions">
       <button class="button secondary" id="helpButton">Help</button>
-      <button class="button secondary" id="resetButton">Reset this device</button>
+      <button class="button secondary" id="resetButton">Reset my saved answers</button>
     </div>
   </header>
 
   <main class="page-shell">
     <div class="notice warning">
-      <strong>Static review copy.</strong> Answers and reviewer initials are saved in this browser only. Shared cross-device locks are not available on GitHub Pages. Do not use this copy as the authoritative shared review database.
+      <strong>Live review server.</strong> Answers, reviewer initials, comments, category assignments, and timing records are saved to the shared review database. The permit records are served from the static bundle.
     </div>
 
     <section id="dashboardView">
@@ -88,8 +88,8 @@
     <div class="help-content">
       <p>Choose a category and review the permits shown in that queue. Read the description and supporting metadata before selecting Yes, No, or Unclear.</p>
       <p>Starting a queue does not claim a permit. The permit is associated with your first saved answer. Your first name initial appears beside the permit for this browser.</p>
-      <p>This static copy keeps two reviewer slots per category permit in local browser storage. A shared lock across reviewers and devices requires the live application backend.</p>
-      <p>Comments autosave locally as you type. Use the Previous and Next controls or the arrow keys to move through the queue.</p>
+      <p>The live server keeps two reviewer slots per category permit and locks a category after two reviewers save their first answers. Reviewer initials are visible to everyone using this server.</p>
+      <p>Comments autosave to the shared database as you type. Use the Previous and Next controls or the arrow keys to move through the queue.</p>
     </div>
   </dialog>
   <script src="app.js"></script>

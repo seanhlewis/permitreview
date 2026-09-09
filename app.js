@@ -1,125 +1,129 @@
-const STORAGE_KEY = "permitreview.static.v1";
-const state = { manifest: null, permits: [], byCategory: new Map(), store: loadStore(), category: null, index: 0 };
+const state = { manifest: null, permits: [], byCategory: new Map(), live: null, category: null, index: 0, openedAt: null, draftTimer: null };
+const reviewerInput = document.querySelector("#reviewerName");
 
-function loadStore() {
-  try { return Object.assign({ reviewerName: "", reviews: {}, drafts: {} }, JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}")); }
-  catch { return { reviewerName: "", reviews: {}, drafts: {} }; }
-}
-function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.store)); }
-function reviewerName() { return document.querySelector("#reviewerName").value.trim(); }
-function reviewerKey(name = reviewerName()) { return name.toLowerCase().replace(/\s+/g, " "); }
-function initial(name = reviewerName()) { return (name.trim()[0] || "?").toUpperCase(); }
+function reviewerName() { return reviewerInput.value.trim(); }
+function initial() { return (reviewerName()[0] || "?").toUpperCase(); }
 function taskKey(category, permit) { return `${category}::${permit.id}`; }
-function records(category, permit) { return state.store.reviews[taskKey(category, permit)] || []; }
-function uniqueInitials(category, permit) { return [...new Map(records(category, permit).map(r => [r.reviewerKey, r.initial])).values()]; }
-function categoryReviewers(category) {
-  const reviewers = new Map();
-  for (const permit of state.byCategory.get(category) || []) for (const record of records(category, permit)) reviewers.set(record.reviewerKey, record.initial);
-  return reviewers;
-}
-function categoryLocked(category) {
-  const reviewers = categoryReviewers(category);
-  return reviewers.size >= (state.manifest?.reviewerSlotsPerPermit || 2) && !reviewers.has(reviewerKey());
-}
-function currentRecord(category, permit) { return records(category, permit).find(r => r.reviewerKey === reviewerKey()) || null; }
-function isAnsweredByCurrent(category, permit) { return !!currentRecord(category, permit); }
-function canEdit(category, permit) { const own = currentRecord(category, permit); return !!own || uniqueInitials(category, permit).length < (state.manifest?.reviewerSlotsPerPermit || 2); }
+function currentPermit() { return (state.byCategory.get(state.category) || [])[state.index]; }
+function currentKey() { const permit = currentPermit(); return permit ? taskKey(state.category, permit) : ""; }
+function savedReview(key) { return state.live?.mine?.[key] || null; }
+function savedDraft(key) { return state.live?.drafts?.[key] || null; }
+function claims(key) { return state.live?.claims?.[key] || []; }
+function categoryMeta(code) { return state.live?.categories?.find(c => c.code === code) || state.manifest.categories.find(c => c.code === code); }
 function esc(value) { return String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[c])); }
+function apiError(payload, fallback) { return payload?.error === "category_locked" ? `This category is already assigned to ${payload.lockedTo.join(" · ")}.` : payload?.error === "permit_locked" ? `This permit already has two saved reviewers: ${payload.lockedTo.join(" · ")}.` : payload?.error || fallback; }
 
+async function loadLive() {
+  const name = reviewerName();
+  const response = await fetch(`/api/state?reviewer=${encodeURIComponent(name)}`, {cache:"no-store"});
+  const payload = await response.json();
+  if (!response.ok || !payload.ok) throw new Error(apiError(payload, "The live review state could not be loaded."));
+  state.live = payload;
+  renderDashboard();
+  if (!document.querySelector("#reviewView").hidden) renderReview();
+}
 async function boot() {
   try {
     const [manifestResponse, permitsResponse] = await Promise.all([fetch("data/manifest.json"), fetch("data/permits.json")]);
-    if (!manifestResponse.ok || !permitsResponse.ok) throw new Error("Data files could not be loaded");
-    state.manifest = await manifestResponse.json();
-    state.permits = (await permitsResponse.json()).permits;
+    if (!manifestResponse.ok || !permitsResponse.ok) throw new Error("Static permit files could not be loaded");
+    state.manifest = await manifestResponse.json(); state.permits = (await permitsResponse.json()).permits;
     for (const category of state.manifest.categories) state.byCategory.set(category.code, state.permits.filter(p => p.category === category.code));
-    document.querySelector("#reviewerName").value = state.store.reviewerName || "";
     document.querySelector("#loadStatus").textContent = `${state.manifest.categoryCount} categories loaded · ${state.manifest.categorySlotCount} category permits`;
-    renderDashboard();
-  } catch (error) { document.querySelector("#loadStatus").textContent = `Unable to load static data: ${error.message}`; }
+    await loadLive();
+  } catch (error) { document.querySelector("#loadStatus").textContent = `Unable to load live review state: ${error.message}`; }
 }
 
 function renderDashboard() {
-  const all = [...state.byCategory.values()].flat();
-  const answered = all.filter(p => isAnsweredByCurrent(p.category, p)).length;
-  const completedCategories = [...state.byCategory.entries()].filter(([c, rows]) => rows.every(p => isAnsweredByCurrent(c, p))).length;
-  document.querySelector("#summary").innerHTML = [
-    [answered, "Your saved answers"],
-    [all.length, "Category permit slots"],
-    [completedCategories, "Completed queues"],
-  ].map(([value, label]) => `<div class="summary-card"><span class="summary-value">${value}</span><span class="summary-label">${label}</span></div>`).join("");
-  document.querySelector("#categoryGrid").innerHTML = state.manifest.categories.map(category => {
-    const rows = state.byCategory.get(category.code) || [];
-    const mine = rows.filter(p => isAnsweredByCurrent(category.code, p)).length;
-    const initials = [...categoryReviewers(category.code).values()].slice(0, 8);
-    const complete = mine === rows.length;
-    const locked = categoryLocked(category.code);
-    const buttonText = locked ? `Locked to ${initials.map(esc).join(" · ")}` : "Review queue";
-    return `<article class="category-card"><div><h3>${esc(category.label)}</h3><div class="category-subline"><span>${mine}/${rows.length} answered</span><span class="category-status">${locked ? "Assigned" : complete ? "Complete" : mine ? "In progress" : "Not started"}</span></div></div><div class="claim-preview">${initials.length ? `Saved reviewer initials in this browser: ${initials.map(esc).join(" · ")}` : "No saved reviewer answers in this browser"}</div><button class="button primary start-category" data-category="${esc(category.code)}" ${locked ? "disabled" : ""}>${buttonText}</button></article>`;
+  const categories = state.manifest.categories.map(c => categoryMeta(c.code));
+  const mine = Object.keys(state.live?.mine || {}).length;
+  const completeCategories = categories.filter(c => c.myAnswered === c.permitCount).length;
+  document.querySelector("#summary").innerHTML = [[mine,"Your saved answers"],[state.manifest.categorySlotCount,"Category permit slots"],[completeCategories,"Completed queues"]].map(([value,label]) => `<div class="summary-card"><span class="summary-value">${value}</span><span class="summary-label">${label}</span></div>`).join("");
+  document.querySelector("#categoryGrid").innerHTML = categories.map(category => {
+    const locked = !!category.lockedForCurrent;
+    const assigned = (category.reviewerInitials || []).join(" · ");
+    const complete = category.myAnswered === category.permitCount;
+    const status = locked ? "Assigned" : complete ? "Complete" : category.myAnswered ? "In progress" : assigned ? "Open" : "Not started";
+    return `<article class="category-card"><div><h3>${esc(category.label)}</h3><div class="category-subline"><span>${category.myAnswered || 0}/${category.permitCount} answered</span><span class="category-status">${status}</span></div></div><div class="claim-preview">${assigned ? `Saved reviewer initials: ${esc(assigned)}` : "No saved reviewer answers"}</div><button class="button primary start-category" data-category="${esc(category.code)}" ${locked ? "disabled" : ""}>${locked ? `Locked to ${esc(assigned)}` : "Review queue"}</button></article>`;
   }).join("");
   document.querySelectorAll(".start-category").forEach(button => button.addEventListener("click", () => openCategory(button.dataset.category)));
 }
 
 function openCategory(category) {
-  if (!reviewerName()) { document.querySelector("#reviewerName").focus(); document.querySelector("#loadStatus").textContent = "Enter your name before opening a review queue."; return; }
-  if (categoryLocked(category)) { document.querySelector("#loadStatus").textContent = "This category already has two saved reviewers in this browser."; return; }
-  state.store.reviewerName = reviewerName(); persist(); state.category = category;
-  const rows = state.byCategory.get(category) || [];
-  const first = rows.findIndex(p => canEdit(category, p) && !isAnsweredByCurrent(category, p));
-  state.index = first < 0 ? 0 : first;
+  if (!reviewerName()) { reviewerInput.focus(); document.querySelector("#loadStatus").textContent = "Enter your name before opening a review queue."; return; }
+  const meta = categoryMeta(category);
+  if (meta?.lockedForCurrent) { document.querySelector("#loadStatus").textContent = `This category is already assigned to ${(meta.lockedTo || []).join(" · ")}.`; return; }
+  state.category = category; const rows = state.byCategory.get(category) || [];
+  const first = rows.findIndex(p => !savedReview(taskKey(category, p)) && claims(taskKey(category, p)).length < 2);
+  state.index = first < 0 ? 0 : first; state.openedAt = Date.now();
   document.querySelector("#dashboardView").hidden = true; document.querySelector("#reviewView").hidden = false; renderReview();
 }
+function elapsedMs() { return state.openedAt ? Math.max(0, Date.now() - state.openedAt) : 0; }
 function renderReview() {
-  const category = state.category, rows = state.byCategory.get(category) || [], permit = rows[state.index];
-  const categoryLabel = state.manifest.categories.find(c => c.code === category)?.label || category;
-  document.querySelector("#reviewCategoryEyebrow").textContent = "Targeted review queue";
-  document.querySelector("#reviewCategoryTitle").textContent = categoryLabel;
+  const category = state.category, rows = state.byCategory.get(category) || [], permit = currentPermit();
+  if (!permit) return;
+  const label = categoryMeta(category)?.label || category;
+  document.querySelector("#reviewCategoryEyebrow").textContent = "Live targeted review queue";
+  document.querySelector("#reviewCategoryTitle").textContent = label;
   document.querySelector("#reviewerBadge").textContent = `${initial()} · ${reviewerName()}`;
   document.querySelector("#queueCount").textContent = `${rows.length} permits`;
-  document.querySelector("#queueList").innerHTML = rows.map((p, index) => {
-    const initials = uniqueInitials(category, p).join(" · ");
-    const own = isAnsweredByCurrent(category, p);
-    return `<button class="queue-item ${index === state.index ? "selected" : ""}" data-index="${index}"><span class="queue-number">${index + 1}</span><span class="queue-summary">${esc(p.description || "No description")}</span><span class="queue-reviewers">${own ? "Your answer saved" : initials ? `Saved: ${esc(initials)}` : canEdit(category, p) ? "Available" : "Two reviewers saved"}</span></button>`;
-  }).join("");
-  document.querySelectorAll(".queue-item").forEach(button => button.addEventListener("click", () => { state.index = Number(button.dataset.index); renderReview(); }));
+  document.querySelector("#queueList").innerHTML = rows.map((p, index) => { const key = taskKey(category,p), own = !!savedReview(key), initials = claims(key).join(" · "), available = !categoryMeta(category)?.lockedForCurrent && (own || claims(key).length < 2); return `<button class="queue-item ${index === state.index ? "selected" : ""}" data-index="${index}"><span class="queue-number">${index + 1}</span><span class="queue-summary">${esc(p.description || "No description")}</span><span class="queue-reviewers">${own ? "Your answer saved" : initials ? `Saved: ${esc(initials)}` : available ? "Available" : "Two reviewers saved"}</span></button>`; }).join("");
+  document.querySelectorAll(".queue-item").forEach(button => button.addEventListener("click", () => { state.index = Number(button.dataset.index); state.openedAt = Date.now(); renderReview(); }));
   document.querySelector("#permitNumber").textContent = permit.permitNumber ? `Permit ${permit.permitNumber}` : "Permit record";
   document.querySelector("#permitProgress").textContent = `${state.index + 1} of ${rows.length}`;
   document.querySelector("#permitDescription").textContent = permit.description || "No description supplied.";
   document.querySelector("#permitMeta").textContent = [permit.city, permit.state, permit.jurisdiction, permit.permitType, permit.workType].filter(Boolean).join(" · ") || "Source metadata unavailable";
-  document.querySelector("#claimers").textContent = uniqueInitials(category, permit).join(" · ") || "None yet";
-  const own = currentRecord(category, permit), locked = !canEdit(category, permit);
+  document.querySelector("#claimers").textContent = claims(taskKey(category, permit)).join(" · ") || "None yet";
+  const own = savedReview(taskKey(category, permit)), draft = savedDraft(taskKey(category, permit));
   document.querySelectorAll("input[name=answer]").forEach(input => input.checked = own?.answer === input.value);
-  const draftKey = `${taskKey(category, permit)}::${reviewerKey()}`;
-  document.querySelector("#comment").value = own?.comment ?? state.store.drafts[draftKey] ?? "";
+  document.querySelector("#comment").value = own?.comment ?? draft?.comment ?? "";
+  const categoryLockedForCurrent = !!categoryMeta(category)?.lockedForCurrent;
+  const permitLocked = !own && claims(taskKey(category, permit)).length >= 2;
+  const locked = categoryLockedForCurrent || permitLocked;
   document.querySelector("#lockMessage").hidden = !locked;
-  document.querySelector("#lockMessage").textContent = "This permit already has two saved reviewer slots in this browser. It is read-only for this reviewer.";
-  document.querySelector("#answerFieldset").disabled = locked;
-  document.querySelector("#comment").disabled = locked;
-  document.querySelector("#saveNext").disabled = locked;
+  document.querySelector("#lockMessage").textContent = categoryLockedForCurrent ? `This category is assigned to ${(categoryMeta(category).lockedTo || []).join(" · ")}.` : `This permit already has two saved reviewers: ${claims(taskKey(category, permit)).join(" · ")}.`;
+  document.querySelector("#answerFieldset").disabled = locked; document.querySelector("#comment").disabled = locked; document.querySelector("#saveNext").disabled = locked;
   document.querySelector("#previousPermit").disabled = state.index === 0;
 }
 
-function saveAnswer(goNext = true) {
-  const category = state.category, permit = (state.byCategory.get(category) || [])[state.index];
-  if (!permit || !canEdit(category, permit)) return;
+async function saveDraft() {
+  if (!state.category || !reviewerName() || !currentPermit()) return;
+  const payload = {category:state.category, permitId:currentPermit().id, reviewerName:reviewerName(), comment:document.querySelector("#comment").value, startedAt:new Date(state.openedAt || Date.now()).toISOString(), elapsedMs:elapsedMs()};
+  const response = await fetch("/api/drafts", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)});
+  const result = await response.json();
+  document.querySelector("#autosaveStatus").textContent = response.ok ? "Comment autosaved to live server" : apiError(result, "Autosave failed");
+  if (response.ok) {
+    const key = currentKey();
+    state.live.drafts[key] = {
+      comment: payload.comment,
+      startedAt: payload.startedAt,
+      savedAt: result.savedAt,
+      elapsedMs: result.elapsedMs
+    };
+  }
+}
+async function saveAnswer() {
+  const permit = currentPermit(); if (!permit) return;
   const answer = document.querySelector("input[name=answer]:checked")?.value;
   if (!answer) { document.querySelector("#autosaveStatus").textContent = "Choose Yes, No, or Unclear before saving."; return; }
-  const key = taskKey(category, permit), row = { reviewerKey: reviewerKey(), reviewerName: reviewerName(), initial: initial(), answer, comment: document.querySelector("#comment").value, savedAt: new Date().toISOString() };
-  const existing = records(category, permit), ownIndex = existing.findIndex(r => r.reviewerKey === row.reviewerKey);
-  if (ownIndex >= 0) existing[ownIndex] = row; else existing.push(row);
-  state.store.reviews[key] = existing; delete state.store.drafts[`${key}::${reviewerKey()}`]; state.store.reviewerName = reviewerName(); persist();
-  if (goNext) { const next = (state.byCategory.get(category) || []).findIndex((p, index) => index > state.index && canEdit(category, p) && !isAnsweredByCurrent(category, p)); if (next >= 0) state.index = next; else { const any = (state.byCategory.get(category) || []).findIndex(p => canEdit(category, p) && !isAnsweredByCurrent(category, p)); if (any >= 0) state.index = any; } }
-  renderReview();
+  const payload = {category:state.category, permitId:permit.id, reviewerName:reviewerName(), answer, comment:document.querySelector("#comment").value, startedAt:new Date(state.openedAt || Date.now()).toISOString(), elapsedMs:elapsedMs()};
+  const response = await fetch("/api/reviews", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)});
+  const result = await response.json();
+  if (!response.ok || !result.ok) { document.querySelector("#autosaveStatus").textContent = apiError(result, "The answer could not be saved."); await loadLive(); return; }
+  await loadLive();
+  const rows = state.byCategory.get(state.category) || [];
+  const next = rows.findIndex((p,index) => index > state.index && !savedReview(taskKey(state.category,p)) && claims(taskKey(state.category,p)).length < 2);
+  if (next >= 0) state.index = next; state.openedAt = Date.now(); renderReview();
 }
-function move(delta) { const rows = state.byCategory.get(state.category) || []; state.index = Math.max(0, Math.min(rows.length - 1, state.index + delta)); renderReview(); }
+function move(delta) { const rows = state.byCategory.get(state.category) || []; state.index = Math.max(0, Math.min(rows.length - 1, state.index + delta)); state.openedAt = Date.now(); renderReview(); }
 
-document.querySelector("#reviewerName").addEventListener("input", event => { state.store.reviewerName = event.target.value; persist(); if (!document.querySelector("#reviewView").hidden) renderReview(); });
-document.querySelector("#comment").addEventListener("input", event => { if (!state.category) return; const permit = (state.byCategory.get(state.category) || [])[state.index]; if (!permit) return; state.store.drafts[`${taskKey(state.category, permit)}::${reviewerKey()}`] = event.target.value; persist(); document.querySelector("#autosaveStatus").textContent = "Comment autosaved locally"; });
-document.querySelector("#saveNext").addEventListener("click", () => saveAnswer(true));
+reviewerInput.addEventListener("input", () => { localStorage.setItem("staticver.reviewerName", reviewerInput.value); if (!document.querySelector("#reviewView").hidden) loadLive().catch(error => document.querySelector("#loadStatus").textContent = error.message); });
+document.querySelector("#comment").addEventListener("input", () => { document.querySelector("#autosaveStatus").textContent = "Saving comment…"; clearTimeout(state.draftTimer); state.draftTimer = setTimeout(() => saveDraft().catch(error => document.querySelector("#autosaveStatus").textContent = error.message), 650); });
+document.querySelector("#saveNext").addEventListener("click", () => saveAnswer().catch(error => document.querySelector("#autosaveStatus").textContent = error.message));
 document.querySelector("#previousPermit").addEventListener("click", () => move(-1));
-document.querySelector("#backToQueues").addEventListener("click", () => { document.querySelector("#reviewView").hidden = true; document.querySelector("#dashboardView").hidden = false; renderDashboard(); });
+document.querySelector("#backToQueues").addEventListener("click", () => { document.querySelector("#reviewView").hidden = true; document.querySelector("#dashboardView").hidden = false; loadLive().catch(() => {}); });
 document.querySelector("#helpButton").addEventListener("click", () => document.querySelector("#helpDialog").showModal());
 document.querySelector("#closeHelp").addEventListener("click", () => document.querySelector("#helpDialog").close());
-document.querySelector("#resetButton").addEventListener("click", () => { if (confirm("Delete saved answers and comments from this browser?")) { localStorage.removeItem(STORAGE_KEY); state.store = loadStore(); document.querySelector("#reviewerName").value = ""; if (!document.querySelector("#reviewView").hidden) { document.querySelector("#reviewView").hidden = true; document.querySelector("#dashboardView").hidden = false; } renderDashboard(); } });
+document.querySelector("#resetButton").addEventListener("click", async () => { if (!reviewerName() || !confirm("Delete your saved live answers, comments, category assignments, and timing records?")) return; const response = await fetch("/api/reset", {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({reviewerName:reviewerName()})}); const result = await response.json(); document.querySelector("#loadStatus").textContent = response.ok ? `Reset ${result.deletedReviews} saved answers and ${result.deletedDrafts} drafts.` : apiError(result, "Reset failed"); await loadLive(); });
 document.addEventListener("keydown", event => { if (document.querySelector("#reviewView").hidden || ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return; if (event.key === "ArrowLeft") move(-1); if (event.key === "ArrowRight") move(1); });
+reviewerInput.value = localStorage.getItem("staticver.reviewerName") || "";
 boot();

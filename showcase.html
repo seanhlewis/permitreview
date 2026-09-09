@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Permit review showcase</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .demo-banner { background:#e8f4ff; border:1px solid #a9d2ee; border-radius:9px; padding:14px 16px; margin-bottom:22px; }
+    .demo-controls { display:flex; gap:12px; align-items:end; flex-wrap:wrap; margin:20px 0; }
+    .demo-controls label { display:grid; gap:6px; font-size:.82rem; font-weight:700; color:var(--muted); }
+    .demo-controls select { min-width:210px; }
+    .demo-queue { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:13px; }
+    .demo-card { background:#fff; border:1px solid var(--line); border-radius:10px; padding:16px; }
+    .demo-card h3 { margin:0 0 8px; font-size:1rem; }
+    .demo-card p { color:var(--muted); font-size:.83rem; margin-bottom:12px; }
+    .demo-card .initials { color:var(--blue-dark); font-weight:800; letter-spacing:.08em; }
+    .demo-card.locked { background:#f0f3f5; }
+    .demo-card button { margin-top:10px; }
+    .demo-review { margin-top:22px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:22px; }
+    .demo-review[hidden] { display:none; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div><div class="eyebrow">Showcase demo</div><h1>Permit review coordination</h1></div>
+    <a class="button secondary" href="/">Live reviewer page</a>
+  </header>
+  <main class="page-shell">
+    <div class="demo-banner"><strong>Demo data only.</strong> These test usernames and answers exist in this page’s memory. They never reach the live database.</div>
+    <div class="demo-controls">
+      <label>Show the page as
+        <select id="demoReviewer"><option value="Alex Morgan">Alex Morgan · A</option><option value="Brian Lee">Brian Lee · B</option><option value="Casey Patel">Casey Patel · C</option></select>
+      </label>
+      <button class="button secondary" id="resetDemo">Reset demo view</button>
+    </div>
+    <div id="demoSummary" class="summary-grid"></div>
+    <div id="demoQueue" class="demo-queue"></div>
+    <article id="demoReview" class="demo-review" hidden></article>
+  </main>
+  <script>
+    const demo = {
+      "ALTERATION_REMODEL": {label:"Alteration / remodel", permits:50, reviewers:["A","B"], sample:"Kitchen and bathroom remodel of an existing residence."},
+      "BATTERY_STORAGE": {label:"Battery storage", permits:50, reviewers:["A"], sample:"Install stationary battery energy storage with backup gateway."},
+      "EV_CHARGER": {label:"EV charger", permits:50, reviewers:[], sample:"Install a Level 2 electric-vehicle charging station."},
+      "MECHANICAL_HVAC": {label:"Mechanical / HVAC", permits:50, reviewers:["B"], sample:"Replace the air-conditioning condenser and ductwork."},
+      "NEW_CONSTRUCTION": {label:"New construction", permits:50, reviewers:["A","B"], sample:"Construct a new two-story single-family residence."},
+      "PLUMBING": {label:"Plumbing", permits:50, reviewers:["C"], sample:"Replace bathroom fixtures and interior supply lines."},
+      "ROOFING": {label:"Roofing", permits:50, reviewers:[], sample:"Tear off and replace asphalt shingles."},
+      "STRUCTURAL": {label:"Structural", permits:50, reviewers:["B","C"], sample:"Repair foundation and reinforce load-bearing framing."}
+    };
+    const names = {"Alex Morgan":"A", "Brian Lee":"B", "Casey Patel":"C"};
+    function render() {
+      const current = names[document.querySelector('#demoReviewer').value];
+      const categories = Object.values(demo);
+      const assigned = categories.filter(c => c.reviewers.includes(current)).length;
+      document.querySelector('#demoSummary').innerHTML = `<div class="summary-card"><span class="summary-value">${assigned}</span><span class="summary-label">Categories assigned to ${current}</span></div><div class="summary-card"><span class="summary-value">${categories.length * 50}</span><span class="summary-label">Demo category slots shown</span></div><div class="summary-card"><span class="summary-value">2</span><span class="summary-label">Maximum reviewers per category</span></div>`;
+      document.querySelector('#demoQueue').innerHTML = categories.map((c, index) => { const locked = c.reviewers.length >= 2 && !c.reviewers.includes(current); const status = locked ? `Locked to ${c.reviewers.join(' · ')}` : c.reviewers.includes(current) ? 'Assigned to you' : c.reviewers.length ? `Open · ${c.reviewers.join(' · ')} saved` : 'Not started'; return `<article class="demo-card ${locked?'locked':''}"><h3>${c.label}</h3><p>${c.sample}</p><div class="initials">${c.reviewers.length ? 'Saved reviewers: '+c.reviewers.join(' · ') : 'No saved reviewers'}</div><div class="category-subline"><span>0/${c.permits} answered in this demo</span><span class="category-status">${status}</span></div><button class="button ${locked?'secondary':'primary'} demo-open" data-key="${Object.keys(demo)[index]}" ${locked?'disabled':''}>${locked?'Locked':'Open demo queue'}</button></article>`; }).join('');
+      document.querySelectorAll('.demo-open').forEach(b => b.addEventListener('click', () => { const c = demo[b.dataset.key]; const panel = document.querySelector('#demoReview'); panel.hidden = false; panel.innerHTML = `<div class="eyebrow">Demo queue</div><h2>${c.label}</h2><p><strong>Example permit:</strong> ${c.sample}</p><p><strong>Saved reviewer initials:</strong> ${c.reviewers.join(' · ') || 'None'}<br><strong>Current demo reviewer:</strong> ${current} · ${names[document.querySelector('#demoReviewer').value]}</p><div class="notice info">A real saved answer would add this reviewer’s initial and start the server timing record. This showcase does not write anything.</div>`; panel.scrollIntoView({behavior:'smooth'}); }));
+    }
+    document.querySelector('#demoReviewer').addEventListener('change', render); document.querySelector('#resetDemo').addEventListener('click', render); render();
+  </script>
+</body>
+</html>
