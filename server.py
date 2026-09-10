@@ -1843,6 +1843,15 @@ class Handler(BaseHTTPRequestHandler):
                     "timingEvents": events,
                     "db": str(DB_PATH),
                 })
+            elif path == "/api/health/":
+                candidate = (APP_DIR / "api/health/index.html").resolve()
+                file_response(self, candidate)
+            elif path.startswith("/api/health/"):
+                candidate = (APP_DIR / path.lstrip("/")).resolve()
+                if APP_DIR in candidate.parents and candidate.is_file():
+                    file_response(self, candidate)
+                else:
+                    text_response(self, "Not found", 404)
             elif path == "/api/status":
                 json_response(self, {"ok": True, "root": str(VALIDATION_ROOT), "samples": [sample_status(s) for s in SAMPLES]})
             elif path == "/api/history":

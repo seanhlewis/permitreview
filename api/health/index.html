@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Permit Review API Health</title>
+  <style>
+    :root { font-family: system-ui, sans-serif; color: #17202a; background: #f6f7f9; }
+    body { max-width: 760px; margin: 48px auto; padding: 0 20px; }
+    main { background: white; border: 1px solid #d9e0e8; border-radius: 12px; padding: 24px; box-shadow: 0 12px 32px #14233212; }
+    h1 { margin: 0 0 8px; }
+    p { color: #5d6978; }
+    .status { display: inline-block; margin: 18px 0; padding: 10px 14px; border-radius: 999px; font-weight: 800; letter-spacing: .06em; }
+    .checking { background: #fff7df; color: #8a5a00; }
+    .up { background: #e7f7ed; color: #127447; }
+    .down { background: #fdeaea; color: #b91c1c; }
+    pre { overflow: auto; background: #17202a; color: #f2f5f7; border-radius: 8px; padding: 16px; min-height: 80px; }
+    button, a { display: inline-block; margin-top: 8px; margin-right: 8px; padding: 10px 14px; border: 1px solid #c6d1dc; border-radius: 8px; background: white; color: #1e5f8a; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+    .meta { font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Permit Review API Health</h1>
+    <p>This static page checks the live backend used by the GitHub Pages reviewer site.</p>
+    <div id="status" class="status checking">CHECKING</div>
+    <div id="meta" class="meta">Checking the backend...</div>
+    <pre id="payload">Waiting for response.</pre>
+    <button id="refresh">Check again</button>
+    <a href="../../">Open reviewer site</a>
+  </main>
+  <script src="../../static/api-config.js"></script>
+  <script>
+    const endpoint = `${window.STATICVER_API_BASE || ""}/api/health`;
+    const statusEl = document.querySelector("#status");
+    const metaEl = document.querySelector("#meta");
+    const payloadEl = document.querySelector("#payload");
+    async function checkHealth() {
+      statusEl.className = "status checking";
+      statusEl.textContent = "CHECKING";
+      metaEl.textContent = `Checking ${endpoint} ...`;
+      const started = performance.now();
+      try {
+        const response = await fetch(`${endpoint}?t=${Date.now()}`, {cache: "no-store"});
+        const payload = await response.json();
+        const elapsed = Math.round(performance.now() - started);
+        statusEl.className = `status ${response.ok && payload.ok ? "up" : "down"}`;
+        statusEl.textContent = response.ok && payload.ok ? "UP" : "DOWN";
+        metaEl.textContent = `HTTP ${response.status} · ${elapsed} ms · ${new Date().toLocaleString()}`;
+        payloadEl.textContent = JSON.stringify(payload, null, 2);
+      } catch (error) {
+        statusEl.className = "status down";
+        statusEl.textContent = "DOWN";
+        metaEl.textContent = `${error.name}: ${error.message} · ${new Date().toLocaleString()}`;
+        payloadEl.textContent = "The backend or Cloudflare tunnel did not respond.";
+      }
+    }
+    document.querySelector("#refresh").addEventListener("click", checkHealth);
+    checkHealth();
+  </script>
+</body>
+</html>
