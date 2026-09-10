@@ -25,3 +25,20 @@ Set `STATICVER_HOST=127.0.0.1` for local-only access. The default host is `0.0.0
 ## Review coordination
 
 The copied app assigns all 50 permits in each active category to a reviewer, for up to 1,050 targeted permits. Saved answers create active assignments. Each permit accepts two distinct reviewer records. Comments and unfinished selections autosave. Every saved review records elapsed time and timestamps. `/test` uses in-memory fixtures and never writes to the live database.
+
+## GitHub Pages + Cloudflare tunnel deployment
+
+The static UI lives at https://seanhlewis.github.io/permitreview/ and talks to
+this backend through a temporary Cloudflare quick tunnel. The tunnel URL is the
+only deployment-specific value and lives in `static/api-config.js`.
+
+If https://seanhlewis.github.io/permitreview/api/health/ reports the API is
+down, the backend or tunnel process on this machine has exited (quick tunnels
+die with their terminal and get a new hostname on restart). Fix in two steps:
+
+```powershell
+.\start_backend_and_tunnel.ps1   # restarts server.py + cloudflared detached, prints the new URL
+.\publish_tunnel_url.ps1         # writes the URL into static/api-config.js, rebuilds, commits, pushes
+```
+
+Logs are in `logs\backend.*.log` and `logs\tunnel.*.log`.
