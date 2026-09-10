@@ -48,6 +48,9 @@ const state = {
   startedAt: Date.now(),
 };
 
+const API_BASE = String(window.STATICVER_API_BASE || "").replace(/\/+$/, "");
+function apiUrl(path) { return `${API_BASE}${path}`; }
+
 const app = document.getElementById("app");
 const reviewerInput = document.getElementById("reviewerName");
 const refreshBtn = document.getElementById("refreshBtn");
@@ -233,7 +236,7 @@ async function flushReviewAutosave() {
 }
 
 async function getJSON(url, options) {
-  const res = await fetch(url, options);
+  const res = await fetch(apiUrl(url), options);
   const data = await res.json();
   if (!res.ok || data.ok === false) {
     const err = new Error(data.message || data.error || "Request failed");

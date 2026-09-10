@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Permit Validation</title>
+  <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">Permit validation</div>
+      <h1>Permit categorization review</h1>
+    </div>
+    <div class="top-actions">
+      <label class="reviewer-label" for="reviewerName">Reviewer</label>
+      <input id="reviewerName" class="reviewer-input" type="text" placeholder="Type your name" autocomplete="off">
+      <button id="themeToggle" class="icon-text" title="Toggle dark / light">Dark</button>
+      <button id="refreshBtn" class="icon-text">Refresh</button>
+      <button id="helpBtn" class="help-icon" title="How to label — reviewer guide" aria-label="Reviewer guide">?</button>
+    </div>
+  </header>
+  <main id="app"></main>
+
+  <div id="helpOverlay" class="help-overlay" hidden>
+    <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="help-head">
+        <div>
+          <div class="help-eyebrow">Reviewer guide · v2</div>
+          <h2 id="helpTitle">How to review this round</h2>
+        </div>
+        <button id="helpClose" class="help-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="help-body">
+        <p class="help-lead">Read the permit description and choose the most specific active category supported by the text. The model prediction is hidden during this review.</p>
+
+        <section class="help-sec">
+          <h3>Before you start</h3>
+          <ol class="help-ol">
+            <li>Enter your reviewer name in the top bar.</li>
+            <li>Use the active targeted queues. Each card shows your assigned count and remaining count.</li>
+            <li>Historical cards are locked. Their old records remain preserved.</li>
+          </ol>
+          <p class="help-note"><b>Assignment rule:</b> the system targets at least 10 permits per available active class, caps each reviewer at 300 class-target reviews, and allows no more than two substantive reviewers per class-target permit. Demolition, Sign, and Window / door have fewer than 10 permits in this round. Solar PV is not an active queue. Heat Pump appears as a choice inside the Mechanical / HVAC queue when the description supports it.</p>
+        </section>
+
+        <section class="help-sec">
+          <h3>For each permit</h3>
+          <ol class="help-ol">
+            <li>Read the full description.</li>
+            <li>Choose the narrow category that matches the main work. One permit can appear in multiple class queues because one permit can support multiple class-specific estimates.</li>
+            <li>Use <b>None of these apply</b> when the work is real and no shown category fits.</li>
+            <li>Use <b>Skip for now</b> when the description is too vague, incomplete, or contradictory.</li>
+            <li>Use the note field for a short explanation. Notes and unfinished selections autosave after a short pause. Autosave does not complete the permit.</li>
+          </ol>
+          <p class="help-note"><b>Category selection completes the permit.</b> You can use Back to revisit a saved choice. Forward saves any unfinished note before moving.</p>
+        </section>
+
+        <section class="help-sec">
+          <h3>Boundary rules</h3>
+          <table class="help-table">
+            <thead><tr><th>Permit text</th><th>Use</th></tr></thead>
+            <tbody>
+              <tr><td>Interior remodel with no clear narrow scope</td><td><b>Alteration / remodel</b></td></tr>
+              <tr><td>New principal residence or principal building</td><td><b>New construction</b></td></tr>
+              <tr><td>ADU, shed, detached garage, or carport</td><td><b>Garage / accessory</b></td></tr>
+              <tr><td>Service panel or meter-main capacity change</td><td><b>Electrical panel upgrade</b></td></tr>
+              <tr><td>EV charging equipment</td><td><b>EV charger</b></td></tr>
+              <tr><td>Stationary battery energy storage</td><td><b>Battery storage</b></td></tr>
+              <tr><td>Air-source, mini-split, or ground-source heat-pump equipment</td><td><b>Heat Pump</b></td></tr>
+              <tr><td>Generic furnace, air conditioner, ventilation, or ductwork</td><td><b>Mechanical / HVAC</b></td></tr>
+              <tr><td>Domestic hot-water equipment, including heat-pump water heaters</td><td><b>Water heater</b></td></tr>
+              <tr><td>Roof work with no re-roofing scope</td><td>Use the equipment category when supported; do not use <b>Roofing</b></td></tr>
+              <tr><td>Sewer lateral or water service to the street</td><td><b>Sewer / utility</b></td></tr>
+              <tr><td>Interior fixtures, supply, or drain lines</td><td><b>Plumbing</b></td></tr>
+              <tr><td>Permit text lists multiple trades</td><td>Choose the headline scope</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="help-sec">
+          <h3>Active categories with example permits</h3>
+          <p class="help-note">These examples show clear cases. Use the permit description when the wording is less direct.</p>
+
+          <div class="help-fam"><span class="fam-tag">Electrical</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>Battery storage</h4><p>Stationary electrical energy storage.</p><p class="gold">&ldquo;Install a 13.5 kWh battery energy storage system with backup gateway.&rdquo;</p><p class="nope">Not: batteries in vehicles or alarms.</p></div>
+            <div class="help-card"><h4>Electrical panel upgrade</h4><p>Service panel, meter-main, or capacity change.</p><p class="gold">&ldquo;Upgrade the main service from 100A to 200A and replace the meter-main.&rdquo;</p><p class="nope">Not: ordinary wiring with no capacity change.</p></div>
+            <div class="help-card"><h4>EV charger</h4><p>Electric-vehicle charging equipment.</p><p class="gold">&ldquo;Install a 240V dedicated circuit and Level 2 EV charger in the garage.&rdquo;</p><p class="nope">Not: parking electrical work with no charger.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">Mechanical and HVAC</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>Mechanical / HVAC</h4><p>General heating, cooling, ventilation, refrigeration, or ductwork.</p><p class="gold">&ldquo;Replace the gas furnace and air conditioner, including new ductwork and thermostat.&rdquo;</p><p class="nope">Heat-pump equipment uses the Heat Pump choice.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">Plumbing</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>Water heater</h4><p>Domestic water-heating equipment.</p><p class="gold">&ldquo;Replace the 50-gallon gas water heater with a tankless unit.&rdquo;</p><p class="nope">Includes heat-pump water heaters.</p></div>
+            <div class="help-card"><h4>Gas</h4><p>Fuel-gas piping, meters, or gas connections.</p><p class="gold">&ldquo;Install new fuel-gas piping and extend the gas line to the range and dryer.&rdquo;</p><p class="nope">Not: water piping or sewer work.</p></div>
+            <div class="help-card"><h4>Plumbing</h4><p>Fixtures, water supply, drainage, or interior piping.</p><p class="gold">&ldquo;Repipe two bathrooms and replace the fixtures, water supply, and drain lines.&rdquo;</p><p class="nope">Not: a sewer main or fuel-gas-only permit.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">Exterior</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>Roofing</h4><p>Roof covering replacement or repair.</p><p class="gold">&ldquo;Tear off and reroof 24 squares of asphalt shingles over the existing residence.&rdquo;</p><p class="nope">Not: roof-mounted equipment with no re-roofing scope.</p></div>
+            <div class="help-card"><h4>Window / door</h4><p>Windows, exterior doors, or glazing.</p><p class="gold">&ldquo;Replace 12 windows and 2 exterior doors like-for-like.&rdquo;</p><p class="nope">Not: framing with no window or door work.</p></div>
+            <div class="help-card"><h4>Sign</h4><p>Signs and sign structures.</p><p class="gold">&ldquo;Install an illuminated wall sign and a monument sign for the retail tenant.&rdquo;</p><p class="nope">Not: traffic signs or contract signatures.</p></div>
+            <div class="help-card"><h4>Deck / patio / porch</h4><p>Decks, patios, porches, or related stairs.</p><p class="gold">&ldquo;Construct a 200 sq ft attached wood deck with stairs at the rear of the residence.&rdquo;</p><p class="nope">Not: an interior floor platform.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">Building</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>Alteration / remodel</h4><p>Renovation of an existing building with no narrower active scope.</p><p class="gold">&ldquo;Remodel the kitchen and two bathrooms with non-structural tenant improvements.&rdquo;</p><p class="nope">Not: a new principal building.</p></div>
+            <div class="help-card"><h4>New construction</h4><p>A new principal building or structure.</p><p class="gold">&ldquo;Construct a new two-story single-family residence, 2,400 sq ft.&rdquo;</p><p class="nope">Not: an accessory structure only.</p></div>
+            <div class="help-card"><h4>Demolition</h4><p>Full or partial demolition.</p><p class="gold">&ldquo;Demolish the existing single-family residence and foundation.&rdquo;</p><p class="nope">Not: removing one fixture during a remodel.</p></div>
+            <div class="help-card"><h4>Garage / accessory</h4><p>Garage, carport, shed, ADU, or other accessory structure.</p><p class="gold">&ldquo;Construct a new detached 400 sq ft garage.&rdquo;</p><p class="nope">Not: the principal new building.</p></div>
+            <div class="help-card"><h4>Structural</h4><p>Foundation, framing, load-bearing, or reinforcement work.</p><p class="gold">&ldquo;Repair the foundation with steel piers and reinforce the load-bearing framing.&rdquo;</p><p class="nope">Not: non-structural finish work.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">Sitework</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>Fence / wall</h4><p>Fences or freestanding and retaining walls.</p><p class="gold">&ldquo;Install 120 ft of cedar fence and a masonry retaining wall.&rdquo;</p><p class="nope">Not: an interior partition wall.</p></div>
+            <div class="help-card"><h4>Driveway / paving</h4><p>Driveways, sidewalks, paving, or hardscape.</p><p class="gold">&ldquo;Replace the concrete driveway approach and sidewalk with new asphalt paving.&rdquo;</p><p class="nope">Not: roof paving products.</p></div>
+            <div class="help-card"><h4>Grading / sitework</h4><p>Earthwork, excavation, grading, erosion control, or site preparation.</p><p class="gold">&ldquo;Perform rough grading and excavation with erosion control for site preparation.&rdquo;</p><p class="nope">Not: an interior renovation.</p></div>
+            <div class="help-card"><h4>Sewer / utility</h4><p>Sewer or water service mains, laterals, or right-of-way connections.</p><p class="gold">&ldquo;Replace the sewer lateral from the house to the city main.&rdquo;</p><p class="nope">Not: interior plumbing fixtures.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">Life safety</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>Fire protection</h4><p>Fire alarms, sprinklers, suppression, or detection systems.</p><p class="gold">&ldquo;Install an NFPA 13D fire sprinkler system throughout the new residence.&rdquo;</p><p class="nope">Not: a lawn irrigation sprinkler.</p></div>
+          </div>
+        </section>
+
+        <section class="help-sec help-tldr">
+          <h3>Quick decision</h3>
+          <p>Read the work description &rarr; select the most specific shown category &rarr; use <b>None of these apply</b> for a real but unmatched scope &rarr; use <b>Skip for now</b> when the text cannot support a decision.</p>
+          <p class="help-note">Need the previous guide? <button id="legacyHelpBtn" class="help-inline" type="button">Open reviewer guide v1</button>.</p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="helpOverlayV1" class="help-overlay" hidden>
+    <div class="help-modal" role="dialog" aria-modal="true" aria-labelledby="helpTitleV1">
+      <div class="help-head">
+        <div>
+          <div class="help-eyebrow">Reviewer guide</div>
+          <h2 id="helpTitleV1">How to label a permit</h2>
+        </div>
+        <button id="helpCloseV1" class="help-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="help-body">
+
+        <p class="help-lead">You read a building-permit description and choose the single category that
+        best describes the <b>actual work</b>. This is a <b>blind</b> review &mdash; you will not see the
+        model's guess. Say what the permit really is, from the text alone.</p>
+
+        <section class="help-sec">
+          <h3>The flow</h3>
+          <ol class="help-ol">
+            <li><b>Click the category</b> that matches the main work, or press its number key
+              <span class="kbd">1</span>&ndash;<span class="kbd">5</span>. The button flashes
+              <span class="pill-good">green</span> to confirm.</li>
+            <li><b>None of these apply</b> (<span class="kbd">8</span>) &mdash; the work is real but fits no
+              category shown. Saves <i>none</i> and moves on. If you <i>know</i> it belongs to another
+              family, use the full-tree escape link to record it.</li>
+            <li><b>Skip for now</b> (<span class="kbd">9</span>) &mdash; the text is too vague or cut off to
+              judge. Skipping is fine &mdash; don't guess.</li>
+            <li>You can <b>go back</b>: your previous choice is highlighted and can be changed.</li>
+          </ol>
+          <p class="help-note"><b>One permit &rarr; one category.</b> If it covers several trades, pick the
+          <b>headline scope</b> &mdash; e.g. &ldquo;New residence with attached garage&rdquo; is
+          <b>New construction</b>, not Garage.</p>
+        </section>
+
+        <section class="help-sec">
+          <h3>Four rules that settle most cases</h3>
+          <ul class="help-ul">
+            <li><b>Label the work, not the paperwork.</b> Ignore the permit type name, department, or fee
+              code. A permit filed &ldquo;Electrical&nbsp;&ndash;&nbsp;Misc.&rdquo; describing a solar array
+              is <b>Solar&nbsp;PV</b>.</li>
+            <li><b>Most specific wins.</b> Use the catch-alls (Electrical, Plumbing, Mechanical/HVAC,
+              Alteration/remodel) only when no narrower category fits.</li>
+            <li><b>When the text won't tell you, Skip</b> &mdash; don't invent detail.</li>
+            <li><b>The electrification categories matter most</b> (Solar, EV charger, Battery, Panel
+              upgrade, Heat pump). Slow down and apply the boundary rules.</li>
+          </ul>
+        </section>
+
+        <section class="help-sec">
+          <h3>Boundary rules that actually trip people up</h3>
+          <table class="help-table">
+            <thead><tr><th>Situation</th><th>Correct label</th></tr></thead>
+            <tbody>
+              <tr><td>Heat-pump <b>water heater</b> (domestic hot water)</td><td><b>Water heater</b> &mdash; not Heat pump</td></tr>
+              <tr><td><b>Solar thermal</b> / solar hot water (no electricity)</td><td><i>not</i> Solar PV (Solar PV = electric only)</td></tr>
+              <tr><td><b>Roof-mounted solar</b>, no re-roofing scope</td><td><b>Solar PV</b> &mdash; not Roofing</td></tr>
+              <tr><td>Service <b>capacity change</b> (100A&rarr;200A, meter-main)</td><td><b>Panel upgrade</b> &mdash; not Electrical</td></tr>
+              <tr><td>Any <b>EV charging equipment</b> present</td><td><b>EV charger</b> &mdash; not Electrical</td></tr>
+              <tr><td><b>Retaining / freestanding wall</b></td><td><b>Fence/wall</b> &mdash; not Structural</td></tr>
+              <tr><td><b>Sewer lateral / water service main</b> to street</td><td><b>Sewer/utility</b> &mdash; not Plumbing</td></tr>
+              <tr><td>Interior <b>fixtures &amp; supply lines</b> only</td><td><b>Plumbing</b> &mdash; not Sewer/utility</td></tr>
+              <tr><td><b>ADU, shed, detached garage, carport</b></td><td><b>Garage/accessory</b> &mdash; not New construction</td></tr>
+              <tr><td><b>Mini-split / air-source heat pump</b></td><td><b>Heat pump</b> &mdash; not Mechanical/HVAC</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="help-sec">
+          <h3>The 25 categories &mdash; with a gold-standard example each</h3>
+          <p class="help-note">Each shows what it means, a <b>gold example</b> (unambiguously this
+          category), and the most common thing it is <i>not</i>.</p>
+
+          <div class="help-fam"><span class="fam-tag">&#9889; Electrical</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>1 &middot; Solar PV</h4><p>Photovoltaic solar <i>electric</i> generation equipment.</p><p class="gold">&ldquo;Install roof-mounted 7.2&nbsp;kW photovoltaic system, 18 modules with string inverter, residential.&rdquo;</p><p class="nope">Not: solar thermal; a generic electrical permit.</p></div>
+            <div class="help-card"><h4>2 &middot; EV charger</h4><p>Electric-vehicle charging equipment (EVSE).</p><p class="gold">&ldquo;Install 240V/40A dedicated circuit and Level 2 EVSE in attached garage.&rdquo;</p><p class="nope">Not: parking electrical with no charger.</p></div>
+            <div class="help-card"><h4>3 &middot; Battery storage</h4><p>Stationary electrical energy storage.</p><p class="gold">&ldquo;Install Powerwall (13.5&nbsp;kWh) battery energy storage system with backup gateway, garage.&rdquo;</p><p class="nope">Not: batteries in alarms or vehicles.</p></div>
+            <div class="help-card"><h4>4 &middot; Panel upgrade</h4><p>Service panel / meter-main replacement or capacity change.</p><p class="gold">&ldquo;Upgrade main service from 100A to 200A, replace meter-main and load center.&rdquo;</p><p class="nope">Not: reconnect/inspection with no change.</p></div>
+            <div class="help-card"><h4>5 &middot; Electrical <span class="catch">catch-all</span></h4><p>General wiring, circuits, service, fixtures, equipment.</p><p class="gold">&ldquo;Rewire kitchen, add six 20A circuits, replace outlets, switches and lighting.&rdquo;</p><p class="nope">Not: solar/EV/battery/panel when one applies.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">&#128293; Mechanical &amp; HVAC</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>6 &middot; Heat pump</h4><p>Heat-pump equipment (air-source, mini-split, ground-source).</p><p class="gold">&ldquo;Install 3-ton ducted air-source heat pump to replace gas furnace and AC.&rdquo;</p><p class="nope">Not: generic HVAC; a heat-pump <i>water heater</i>.</p></div>
+            <div class="help-card"><h4>7 &middot; Mechanical / HVAC <span class="catch">catch-all</span></h4><p>General heating, ventilation, cooling, refrigeration, ductwork.</p><p class="gold">&ldquo;Replace 4-ton gas furnace and condenser, new ductwork and thermostat; AC changeout.&rdquo;</p><p class="nope">Not: a heat pump when that fits.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">&#128703; Plumbing</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>8 &middot; Water heater</h4><p>Water-heating equipment.</p><p class="gold">&ldquo;Replace 50-gallon gas water heater with tankless unit; like-for-like.&rdquo;</p><p class="nope">Not: a space-heating boiler, no domestic hot water.</p></div>
+            <div class="help-card"><h4>9 &middot; Gas</h4><p>Fuel-gas piping, meters, or gas-fired equipment connections.</p><p class="gold">&ldquo;Install new fuel-gas piping and meter for range and dryer; gas line extension.&rdquo;</p><p class="nope">Not: water piping; gasoline storage.</p></div>
+            <div class="help-card"><h4>10 &middot; Plumbing <span class="catch">catch-all</span></h4><p>General fixtures, water supply, drainage, piping.</p><p class="gold">&ldquo;Repipe two bathrooms, replace fixtures, water supply and drain lines.&rdquo;</p><p class="nope">Not: fuel gas only; a sewer main only.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">&#127968; Exterior</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>11 &middot; Roofing</h4><p>Roof covering replacement, repair, or new roof.</p><p class="gold">&ldquo;Tear off and reroof 24 squares of asphalt shingles over existing residence.&rdquo;</p><p class="nope">Not: roof-mounted equipment, no roofing scope.</p></div>
+            <div class="help-card"><h4>12 &middot; Window/door</h4><p>Windows, doors, or glazing.</p><p class="gold">&ldquo;Replace 12 windows and 2 exterior doors like-for-like; retrofit vinyl.&rdquo;</p><p class="nope">Not: framing with no window/door work.</p></div>
+            <div class="help-card"><h4>13 &middot; Sign</h4><p>Signs and sign structures.</p><p class="gold">&ldquo;Install illuminated wall sign and monument sign for retail tenant.&rdquo;</p><p class="nope">Not: traffic signs; contract signatures.</p></div>
+            <div class="help-card"><h4>14 &middot; Deck/patio/porch</h4><p>Decks, patios, or porches.</p><p class="gold">&ldquo;Construct 200 sq ft attached wood deck with stairs at rear of residence.&rdquo;</p><p class="nope">Not: an interior floor platform.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">&#127959;&#65039; Building</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>15 &middot; Alteration/remodel <span class="catch">catch-all</span></h4><p>Alteration, renovation, or remodel of an existing building.</p><p class="gold">&ldquo;Interior remodel of kitchen and two baths, non-structural; tenant improvement.&rdquo;</p><p class="nope">Not: a new standalone building.</p></div>
+            <div class="help-card"><h4>16 &middot; New construction</h4><p>A new principal building or structure.</p><p class="gold">&ldquo;Construct new two-story single-family residence, 2,400 sq ft.&rdquo;</p><p class="nope">Not: an addition or accessory structure only.</p></div>
+            <div class="help-card"><h4>17 &middot; Demolition</h4><p>Full or partial demolition.</p><p class="gold">&ldquo;Full demolition of existing single-family residence and foundation.&rdquo;</p><p class="nope">Not: removing one fixture.</p></div>
+            <div class="help-card"><h4>18 &middot; Garage/accessory</h4><p>Garage, carport, shed, ADU, or other accessory structure.</p><p class="gold">&ldquo;Construct new detached 400 sq ft garage&rdquo; / &ldquo;Build 600 sq ft ADU.&rdquo;</p><p class="nope">Not: a principal new building.</p></div>
+            <div class="help-card"><h4>19 &middot; Structural</h4><p>Framing, foundation, load-bearing or reinforcement work.</p><p class="gold">&ldquo;Foundation repair: install 8 steel piers and reinforce framing; seismic retrofit.&rdquo;</p><p class="nope">Not: non-structural finish work.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">&#127795; Sitework</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>20 &middot; Pool/spa</h4><p>Swimming pool, spa, hot tub, or pool equipment.</p><p class="gold">&ldquo;Construct in-ground gunite swimming pool and spa with equipment pad.&rdquo;</p><p class="nope">Not: a fountain or a beauty spa.</p></div>
+            <div class="help-card"><h4>21 &middot; Fence/wall</h4><p>Fences or freestanding/retaining walls.</p><p class="gold">&ldquo;Install 120 ft of 6 ft cedar fence and a 4 ft masonry retaining wall.&rdquo;</p><p class="nope">Not: an interior partition wall.</p></div>
+            <div class="help-card"><h4>22 &middot; Driveway/paving</h4><p>Driveway, sidewalk, paving, or hardscape.</p><p class="gold">&ldquo;Replace concrete driveway approach and sidewalk; new asphalt paving.&rdquo;</p><p class="nope">Not: roof paving products.</p></div>
+            <div class="help-card"><h4>23 &middot; Grading/sitework</h4><p>Earthwork, excavation, grading, erosion control, site prep.</p><p class="gold">&ldquo;Rough grading and excavation with erosion control for site preparation.&rdquo;</p><p class="nope">Not: an interior renovation.</p></div>
+            <div class="help-card"><h4>24 &middot; Sewer/utility</h4><p>Sewer/water service main, lateral, or ROW utility connection.</p><p class="gold">&ldquo;Replace sewer lateral from house to city main&rdquo; / &ldquo;New 1-inch water service line.&rdquo;</p><p class="nope">Not: interior plumbing fixtures.</p></div>
+          </div>
+
+          <div class="help-fam"><span class="fam-tag">&#129519; Life safety</span></div>
+          <div class="help-cards">
+            <div class="help-card"><h4>25 &middot; Fire protection</h4><p>Fire alarm, sprinkler, suppression, or detection systems.</p><p class="gold">&ldquo;Install NFPA 13D fire sprinkler system throughout new residence; monitored fire alarm.&rdquo;</p><p class="nope">Not: a lawn irrigation sprinkler.</p></div>
+          </div>
+        </section>
+
+        <section class="help-sec help-tldr">
+          <h3>The whole decision in one line</h3>
+          <p>Read the description &rarr; pick the <b>most specific</b> category for the <b>main work</b>
+          &rarr; if nothing in the shown family fits, <b>None of these apply</b> &rarr; if you can't tell,
+          <b>Skip</b>. Watch the electrification boundaries. Label the <b>work</b>, never the paperwork.</p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="static/api-config.js"></script>
+  <script src="static/app.js"></script>
+</body>
+</html>
