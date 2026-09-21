@@ -30,7 +30,7 @@ if (-not $cf) { $cf = 'C:\Users\sean\AppData\Local\Programs\cloudflared\bin\clou
 $tunnelLog = Join-Path $root 'logs\tunnel.err.log'
 # Truncate the old log so we never read a stale URL.
 Set-Content -Path $tunnelLog -Value '' -NoNewline
-$tun = Start-Process -FilePath $cf -ArgumentList 'tunnel', '--url', "http://127.0.0.1:$Port", '--no-autoupdate' `
+$tun = Start-Process -FilePath $cf -ArgumentList 'tunnel', '--url', "http://127.0.0.1:$Port", '--protocol', 'http2', '--no-autoupdate' `
     -WorkingDirectory $root -WindowStyle Hidden `
     -RedirectStandardOutput (Join-Path $root 'logs\tunnel.out.log') `
     -RedirectStandardError $tunnelLog -PassThru
